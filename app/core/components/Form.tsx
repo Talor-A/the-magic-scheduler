@@ -2,6 +2,7 @@ import { useState, ReactNode, PropsWithoutRef } from "react"
 import { Formik, FormikProps } from "formik"
 import { validateZodSchema } from "blitz"
 import { z } from "zod"
+import { Button, chakra, ChakraProps, Stack, useColorModeValue } from "@chakra-ui/react"
 
 export interface FormProps<S extends z.ZodType<any, any>>
   extends Omit<PropsWithoutRef<JSX.IntrinsicElements["form"]>, "onSubmit"> {
@@ -30,6 +31,7 @@ export function Form<S extends z.ZodType<any, any>>({
   ...props
 }: FormProps<S>) {
   const [formError, setFormError] = useState<string | null>(null)
+  const bg = useColorModeValue("white", "gray.700")
   return (
     <Formik
       initialValues={initialValues || {}}
@@ -47,28 +49,24 @@ export function Form<S extends z.ZodType<any, any>>({
       }}
     >
       {({ handleSubmit, isSubmitting }) => (
-        <form onSubmit={handleSubmit} className="form" {...props}>
-          {/* Form fields supplied as children are rendered here */}
-          {children}
+        <chakra.form onSubmit={handleSubmit} rounded={"lg"} bg={bg} boxShadow={"lg"} p={8}>
+          <Stack spacing={4}>
+            {/* Form fields supplied as children are rendered here */}
+            {children}
 
-          {formError && (
-            <div role="alert" style={{ color: "red" }}>
-              {formError}
-            </div>
-          )}
+            {formError && (
+              <div role="alert" style={{ color: "red" }}>
+                {formError}
+              </div>
+            )}
 
-          {submitText && (
-            <button type="submit" disabled={isSubmitting}>
-              {submitText}
-            </button>
-          )}
-
-          <style global jsx>{`
-            .form > * + * {
-              margin-top: 1rem;
-            }
-          `}</style>
-        </form>
+            {submitText && (
+              <Button type="submit" disabled={isSubmitting}>
+                {submitText}
+              </Button>
+            )}
+          </Stack>
+        </chakra.form>
       )}
     </Formik>
   )

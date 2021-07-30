@@ -3,18 +3,17 @@ import { LabeledTextField } from "app/core/components/LabeledTextField"
 import { Form, FORM_ERROR } from "app/core/components/Form"
 import login from "app/auth/mutations/login"
 import { Login } from "app/auth/validations"
+import { Link as ChakraLink } from "@chakra-ui/react"
 
-type LoginFormProps = {
+interface LoginFormProps {
   onSuccess?: () => void
 }
 
-export const LoginForm = (props: LoginFormProps) => {
+export const LoginForm = ({ onSuccess }: LoginFormProps) => {
   const [loginMutation] = useMutation(login)
 
   return (
     <div>
-      <h1>Login</h1>
-
       <Form
         submitText="Login"
         schema={Login}
@@ -22,7 +21,7 @@ export const LoginForm = (props: LoginFormProps) => {
         onSubmit={async (values) => {
           try {
             await loginMutation(values)
-            props.onSuccess?.()
+            onSuccess?.()
           } catch (error) {
             if (error instanceof AuthenticationError) {
               return { [FORM_ERROR]: "Sorry, those credentials are invalid" }
@@ -37,15 +36,16 @@ export const LoginForm = (props: LoginFormProps) => {
       >
         <LabeledTextField name="email" label="Email" placeholder="Email" />
         <LabeledTextField name="password" label="Password" placeholder="Password" type="password" />
-        <div>
-          <Link href={Routes.ForgotPasswordPage()}>
-            <a>Forgot your password?</a>
-          </Link>
-        </div>
+        <Link passHref href={Routes.ForgotPasswordPage()}>
+          <ChakraLink color={"blue.400"}>Forgot password?</ChakraLink>
+        </Link>
       </Form>
 
       <div style={{ marginTop: "1rem" }}>
-        Or <Link href={Routes.SignupPage()}>Sign Up</Link>
+        Or{" "}
+        <Link passHref href={Routes.SignupPage()}>
+          <ChakraLink color={"blue.400"}>Sign Up</ChakraLink>
+        </Link>
       </div>
     </div>
   )

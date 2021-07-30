@@ -1,10 +1,6 @@
-import { ReactNode, Suspense } from "react"
-import { Link, BlitzPage, useMutation, Routes } from "blitz"
+import { Link, BlitzPage, Routes, Head } from "blitz"
 import Layout from "app/core/layouts/Layout"
-import { useCurrentUser } from "app/core/hooks/useCurrentUser"
-import logout from "app/auth/mutations/logout"
 
-import Head from "next/head"
 import {
   Box,
   Heading,
@@ -21,6 +17,7 @@ const CallToActionWithAnnotation = () => {
   return (
     <>
       <Head>
+        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
           href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap"
           rel="stylesheet"
@@ -120,6 +117,6 @@ const Home: BlitzPage = () => {
 
 Home.suppressFirstRenderFlicker = true
 Home.getLayout = (page) => <Layout title="Home">{page}</Layout>
-Home.redirectAuthenticatedTo = Routes.CoursesPage()
+Home.redirectAuthenticatedTo = Routes.Dashboard()
 
 export default Home

@@ -1,7 +1,7 @@
 import { ReactNode } from "react"
 import { Head } from "blitz"
 
-type LayoutProps = {
+export type LayoutProps = {
   title?: string
   children: ReactNode
 }
