@@ -1,3 +1,4 @@
+import { EditIcon } from "@chakra-ui/icons"
 import {
   Alert,
   AlertIcon,
@@ -14,15 +15,24 @@ import {
   Box,
   useColorModeValue,
   Heading,
+  IconButton,
+  ButtonGroup,
+  Input,
+  FormControl,
+  Divider,
+  HStack,
 } from "@chakra-ui/react"
 import { Header } from "app/core/components/Header"
+import LabeledTextField from "app/core/components/LabeledTextField"
 import { useLoggedInUser } from "app/core/hooks/useCurrentUser"
 import Layout from "app/core/layouts/Layout"
 import acceptInvite from "app/organizations/mutations/acceptInvite"
+import inviteUser, { InviteUser } from "app/organizations/mutations/inviteUser"
 import getInvitations from "app/organizations/queries/getIncomingInvitations"
 import getTeam from "app/organizations/queries/getTeam"
-import { BlitzPage, useMutation, useQuery, useSession } from "blitz"
-import { Membership, Organization } from "db"
+import { BlitzPage, useMutation, useQuery, useSession, validateZodSchema } from "blitz"
+import { Membership, MembershipRole, Organization } from "db"
+import { Formik } from "formik"
 import React, { Suspense } from "react"
 
 const Invite = (invitation: Membership & { organization: Organization }) => {
@@ -58,11 +68,12 @@ const InvitationsList = () => {
     </Stack>
   )
 }
+
 const TeamList = () => {
   const [team] = useQuery(getTeam, null)
 
   return (
-    <Box rounded="lg" border="1px solid" borderColor="gray.200" p={4} shadow="md">
+    <Box rounded="lg" border="1px solid" borderColor="gray.200" px={4} py={6} shadow="md">
       <Heading ml={5}>My Team</Heading>
       <Table>
         <Thead>
@@ -70,6 +81,7 @@ const TeamList = () => {
             <Th>Name</Th>
             <Th>Email</Th>
             <Th>Role</Th>
+            <Th>Actions</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -78,23 +90,52 @@ const TeamList = () => {
               <Td>{member.user.name}</Td>
               <Td>{member.user.email}</Td>
               <Td>{member.user.pending ? "Invited" : member.role}</Td>
+              <Td>
+                <IconButton icon={<EditIcon />} aria-label="Edit" onClick={() => {}} />
+              </Td>
             </Tr>
           ))}
-          <Tr>
-            <Td colSpan={2}>
-              <Button colorScheme="green" onClick={() => {}}>
-                Invite Members
-              </Button>
-            </Td>
-            <Td>
-              <Button variant="link" ml="auto">
-                {"Manage Team >"}
-              </Button>
-            </Td>
-          </Tr>
         </Tbody>
       </Table>
+      <Box px={6}>
+        <Divider my={4} />
+        <TeamInviteRow />
+      </Box>
     </Box>
+  )
+}
+
+const TeamInviteRow = () => {
+  const [invite] = useMutation(inviteUser)
+  return (
+    <Formik
+      validate={validateZodSchema(InviteUser)}
+      initialValues={{ email: "", name: "" }}
+      onSubmit={async (values) => {
+        const result = await invite({
+          asRole: "USER",
+          invitedUserEmail: values.email,
+          invitedUserName: values.name,
+        })
+      }}
+    >
+      {({ isSubmitting, handleSubmit, isValid, values }) => (
+        <HStack align="flex-end">
+          <LabeledTextField name="name" label="Name" placeholder={"Optional"} />
+          <LabeledTextField name="email" label="* Email" placeholder={"email@mycompany.com"} />
+          <Button
+            mb={2}
+            px={4}
+            colorScheme="green"
+            onClick={() => handleSubmit()}
+            isLoading={isSubmitting}
+            isDisabled={!values.email.length || !isValid}
+          >
+            {"Invite"}
+          </Button>
+        </HStack>
+      )}
+    </Formik>
   )
 }
 
