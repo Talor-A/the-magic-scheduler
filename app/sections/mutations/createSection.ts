@@ -12,11 +12,12 @@ export default resolver.pipe(
   resolver.zod(CreateSection),
   resolver.authorize(),
   async ({ courseId, instructorIds = [] }, ctx) => {
-    invariant(ctx.session.orgId, "orgId is required for createCourse")
+    const { orgId: organizationId } = ctx.session
+    invariant(organizationId, "orgId is required for createCourse")
 
     const course = await db.course.findFirst({
       where: {
-        organizationId: ctx.session.orgId,
+        organizationId,
         id: courseId,
       },
     })
@@ -27,7 +28,7 @@ export default resolver.pipe(
       where: {
         OR: instructorIds.map((id) => ({
           id,
-          memberships: { some: { organizationId: ctx.session.orgId } },
+          memberships: { some: { organizationId } },
         })),
       },
     })

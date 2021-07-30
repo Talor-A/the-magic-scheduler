@@ -1,4 +1,4 @@
-import { resolver, NotFoundError } from "blitz"
+import { resolver, NotFoundError, AuthorizationError } from "blitz"
 import db from "db"
 import { z } from "zod"
 
@@ -8,6 +8,8 @@ const GetCourse = z.object({
 })
 
 export default resolver.pipe(resolver.zod(GetCourse), resolver.authorize(), async ({ id }, ctx) => {
+  if (!ctx.session.orgId) throw new AuthorizationError("No orgId in session")
+
   const course = await db.course.findFirst({
     where: { id, organizationId: ctx.session.orgId },
     include: {

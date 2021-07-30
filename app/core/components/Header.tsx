@@ -46,8 +46,14 @@ const UserMenu = () => {
       <Avatar size="sm" name={user.name || user.email} as={MenuButton}></Avatar>
       <MenuList>
         <MenuItem>
-          {"Organization: "}
-          <chakra.strong>{org.name}</chakra.strong>
+          {org ? (
+            <>
+              {"Organization: "}
+              <chakra.strong>{org.name}</chakra.strong>
+            </>
+          ) : (
+            "No Organization set"
+          )}
         </MenuItem>
         <Link href={Routes.Profile()} passHref>
           <MenuItem as={"a"}>Profile</MenuItem>

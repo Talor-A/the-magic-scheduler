@@ -1,4 +1,4 @@
-import { paginate, resolver } from "blitz"
+import { AuthorizationError, paginate, resolver } from "blitz"
 import db, { Prisma } from "db"
 
 interface GetCoursesInput
@@ -7,6 +7,8 @@ interface GetCoursesInput
 export default resolver.pipe(
   resolver.authorize(),
   async ({ where, orderBy, skip = 0, take = 100 }: GetCoursesInput, ctx) => {
+    if (!ctx.session.orgId) throw new AuthorizationError("no orgId")
+
     const currentOrgWhere: Prisma.CourseFindManyArgs["where"] = {
       organizationId: ctx.session.orgId,
     }

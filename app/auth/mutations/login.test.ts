@@ -1,7 +1,8 @@
 import db from "db"
-import { authenticateUser } from "./login"
+import login, { authenticateUser } from "./login"
 import seed from "db/seeds"
 import invariant from "tiny-invariant"
+import { getTestSession } from "test/utils"
 
 beforeAll(async () => {
   await seed()
@@ -20,26 +21,57 @@ describe("authenticateUser", () => {
     expect(user.email).toBe("customer3@test.com")
     expect(user.role).toBe("CUSTOMER")
   })
+})
 
-  it("should return user memberships if they exist", async () => {
-    const user = await authenticateUser("customer0@test.com", "customer123")
-
-    invariant(user.memberships[0], "user.memberships should exist")
-
-    expect(user.memberships[0].role).toBe("OWNER")
-    expect(user.memberships[0].userId).toBe(user.id)
-  })
-
-  it("should not return memberships the user has not accepted", async () => {
-    const user = await authenticateUser("customer1@test.com", "customer123")
-
-    expect(user.memberships).toHaveLength(0)
-
-    const invite = await db.membership.findFirst({
-      where: {
-        invitedEmail: user.email,
-      },
+describe("login", () => {
+  it("should set orgId in session for user in an org", async () => {
+    const initialUser = await db.user.findFirst({
+      where: { email: "customer0@test.com" },
     })
-    invariant(invite, "invite should exist")
+    invariant(initialUser, "initial user not found")
+
+    const session = getTestSession({
+      user: initialUser,
+    })
+
+    const membership = await db.membership.findFirst({
+      where: { userId: initialUser.id },
+    })
+    invariant(membership, "membership not found")
+
+    const user = await login(
+      {
+        email: "customer0@test.com",
+        password: "customer123",
+      },
+      session
+    )
+
+    expect(session.session.$create).toBeCalledWith({
+      userId: user.id,
+      roles: ["CUSTOMER", "OWNER"],
+      orgId: membership.organizationId,
+    })
+  })
+  it("should not set orgId in session for user not in an org", async () => {
+    const initialUser = await db.user.findFirst({
+      where: { email: "customer3@test.com" },
+    })
+    invariant(initialUser, "initial user not found")
+    const session = getTestSession({
+      user: initialUser,
+    })
+    const user = await login(
+      {
+        email: "customer3@test.com",
+        password: "customer123",
+      },
+      session
+    )
+    expect(session.session.$create).toBeCalledWith({
+      userId: user.id,
+      roles: ["CUSTOMER"],
+      orgId: null,
+    })
   })
 })
