@@ -17,6 +17,7 @@ model Organization {
   name String
 
   membership Membership[]
+  Course     Course[]
 }
 
 model Membership {
@@ -43,6 +44,7 @@ enum MembershipRole {
 }
 
 // The owners of the SaaS (you) can have a SUPERADMIN role to access all data
+
 enum GlobalRole {
   SUPERADMIN
   CUSTOMER
@@ -60,6 +62,8 @@ model User {
   memberships Membership[]
   Session     Session[]
   tokens      Token[]
+  sections    Section[]
+
 }
 
 model Session {
@@ -94,4 +98,23 @@ model Token {
 
 enum TokenType {
   RESET_PASSWORD
+}
+
+model Course {
+  id             Int          @id @default(autoincrement())
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  name           String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  Section        Section[]
+  organizationId Int
+}
+
+model Section {
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  instructors User[]
+  course      Course   @relation(fields: [courseId], references: [id])
+  courseId    Int
 }
