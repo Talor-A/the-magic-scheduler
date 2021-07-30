@@ -2,6 +2,7 @@
 
 import { SecurePassword } from "blitz"
 import db from "db"
+import faker from "faker"
 
 /*
  * This seed function is executed when you run `blitz db seed`.
@@ -27,7 +28,7 @@ const seed = async () => {
   for (let i = 0; i < 5; i++) {
     await db.user.create({
       data: {
-        name: "Customer " + i,
+        name: faker.name.findName(),
         email: "customer" + i + "@test.com",
         hashedPassword: await SecurePassword.hash("customer123"),
         role: "CUSTOMER",
@@ -38,7 +39,7 @@ const seed = async () => {
   // create a new organization for a customer
   const firstOrg = await db.organization.create({
     data: {
-      name: "Organization 1",
+      name: faker.company.companyName(),
       membership: {
         create: [
           {

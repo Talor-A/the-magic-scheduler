@@ -15,19 +15,29 @@ export default resolver.pipe(
   async ({ invitationId, orgId }, ctx) => {
     const user = await getLoggedInUser(null, ctx)
 
+    const invitation = await db.membership.findFirst({
+      where: {
+        organizationId: orgId,
+        invitedEmail: user.email,
+      },
+    })
+
+    invariant(invitation, "Invitation not found")
+    invariant(invitationId === invitation.id, "Invitation ID does not match")
+
     const membership = await db.membership.update({
       data: {
         invitedEmail: null,
         invitedName: null,
         userId: user.id,
       },
-      where: {
-        id: invitationId,
-        organizationId_invitedEmail: {
-          organizationId: orgId,
-          invitedEmail: user.email,
-        },
-      },
+      where: { id: invitation.id },
+    })
+
+    await ctx.session.$create({
+      orgId: orgId,
+      roles: [user.role, membership.role],
+      userId: user.id,
     })
 
     return membership

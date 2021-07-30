@@ -45,6 +45,7 @@
     "zod": "3.5.1"
   },
   "devDependencies": {
+    "@types/faker": "5.5.7",
     "@types/preview-email": "2.0.1",
     "@types/react": "17.0.15",
     "eslint": "7.31.0",
