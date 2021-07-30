@@ -1,5 +1,15 @@
 import { Suspense } from "react"
-import { Head, Link, useRouter, useQuery, useMutation, useParam, BlitzPage, Routes } from "blitz"
+import {
+  Head,
+  Link,
+  useRouter,
+  useQuery,
+  useMutation,
+  useParam,
+  BlitzPage,
+  Routes,
+  invalidateQuery,
+} from "blitz"
 import Layout from "app/core/layouts/Layout"
 import getCourse from "app/courses/queries/getCourse"
 import updateCourse from "app/courses/mutations/updateCourse"
@@ -8,7 +18,7 @@ import { CourseForm, FORM_ERROR } from "app/courses/components/CourseForm"
 export const EditCourse = () => {
   const router = useRouter()
   const courseId = useParam("courseId", "number")
-  const [course, { setQueryData }] = useQuery(
+  const [course] = useQuery(
     getCourse,
     { id: courseId },
     {
@@ -41,7 +51,7 @@ export const EditCourse = () => {
                 id: course.id,
                 ...values,
               })
-              await setQueryData(updated)
+              await invalidateQuery(getCourse, { id: updated.id })
               router.push(Routes.ShowCoursePage({ courseId: updated.id }))
             } catch (error) {
               console.error(error)

@@ -7,9 +7,17 @@ const GetCourse = z.object({
   id: z.number().optional().refine(Boolean, "Required"),
 })
 
-export default resolver.pipe(resolver.zod(GetCourse), resolver.authorize(), async ({ id }) => {
-  // TODO: in multi-tenant app, you must add validation to ensure correct tenant
-  const course = await db.course.findFirst({ where: { id } })
+export default resolver.pipe(resolver.zod(GetCourse), resolver.authorize(), async ({ id }, ctx) => {
+  const course = await db.course.findFirst({
+    where: { id, organizationId: ctx.session.orgId },
+    include: {
+      Section: {
+        include: {
+          instructors: true,
+        },
+      },
+    },
+  })
 
   if (!course) throw new NotFoundError()
 

@@ -8,6 +8,10 @@ export const Signup = z.object({
   organizationName: z.string().min(1).max(60),
 })
 
+export const UpdateProfile = z.object({
+  name: z.string().min(1).max(60),
+})
+
 export const Login = z.object({
   email: z.string().email(),
   password: z.string(),

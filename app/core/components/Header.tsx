@@ -47,7 +47,7 @@ const UserMenu = () => {
           {"Organization: "}
           <chakra.strong>{org.name}</chakra.strong>
         </MenuItem>
-        <Link href={Routes.Home()} passHref>
+        <Link href={Routes.Profile()} passHref>
           <MenuItem as={"a"}>Profile</MenuItem>
         </Link>
         <MenuItem
