@@ -1,4 +1,20 @@
-import { Alert, AlertIcon, Button, chakra, Stack } from "@chakra-ui/react"
+import {
+  Alert,
+  AlertIcon,
+  Button,
+  chakra,
+  Stack,
+  Table,
+  Tr,
+  Th,
+  Thead,
+  Tbody,
+  Td,
+  Flex,
+  useColorModeValue,
+  Heading,
+} from "@chakra-ui/react"
+import { Header } from "app/core/components/Header"
 import { useLoggedInUser } from "app/core/hooks/useCurrentUser"
 import Layout from "app/core/layouts/Layout"
 import acceptInvite from "app/organizations/mutations/acceptInvite"
@@ -16,10 +32,11 @@ const Invite = (invitation: Membership & { organization: Organization }) => {
       <AlertIcon />
       You have been invited to {invitation.organization.name} as role: {invitation.role}.
       <Button
+        ml="auto"
         isLoading={isLoading}
         onClick={() => accept({ invitationId: invitation.id, orgId: invitation.organizationId })}
       >
-        Accept?
+        Accept
       </Button>
     </Alert>
   )
@@ -43,16 +60,42 @@ const TeamList = () => {
   const [team] = useQuery(getTeam, null)
 
   return (
-    <>
-      My Team:
-      {team?.map((member) => (
-        <chakra.div key={member.id}>
-          {member.user.name} {member.user.email} {member.user.pending ? "Pending" : member.role}
-        </chakra.div>
-      ))}
-    </>
+    <Table>
+      <Thead>
+        <Tr>
+          <Th>Name</Th>
+          <Th>Email</Th>
+          <Th>Role</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        {team?.map((member) => (
+          <Tr key={member.id}>
+            <Td>{member.user.name}</Td>
+            <Td>{member.user.email}</Td>
+            <Td>{member.user.pending ? "Invited" : member.role}</Td>
+          </Tr>
+        ))}
+      </Tbody>
+    </Table>
   )
 }
+
+const Welcome = () => (
+  <Stack alignItems="center" justifyContent="center" bg="green.900" p={8} rounded="xl">
+    <Heading>Welcome to Magic Scheduler!</Heading>
+    <p>
+      You are not a member of any organizations.
+      <br />
+      {"If you're an instructor, you'll need an administrator to invite you to your organization."}
+      Or,
+      <b>
+        <a href="/organizations/new">Create your first organization</a>
+      </b>
+      to get started.
+    </p>
+  </Stack>
+)
 
 const Dashboard: BlitzPage = () => {
   const session = useSession()
@@ -60,6 +103,7 @@ const Dashboard: BlitzPage = () => {
   if (!session.orgId) {
     return (
       <>
+        <Welcome />
         <InvitationsList />
       </>
     )
@@ -74,8 +118,13 @@ const Dashboard: BlitzPage = () => {
 
 Dashboard.suppressFirstRenderFlicker = true
 Dashboard.getLayout = (page) => (
-  <Layout title="Profile">
-    <Suspense fallback={<div>Loading...</div>}>{page}</Suspense>
+  <Layout title="Dashboard">
+    <Suspense fallback={<div>Loading...</div>}>
+      <Header />
+      <Flex minH={"100vh"} p={8} align="stretch">
+        <Stack spacing={8}>{page}</Stack>
+      </Flex>
+    </Suspense>
   </Layout>
 )
 Dashboard.authenticate = {

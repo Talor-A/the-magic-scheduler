@@ -41,7 +41,7 @@ const UserMenu = () => {
 
   return (
     <Menu>
-      <Avatar size="sm" name={user.email} as={MenuButton}></Avatar>
+      <Avatar size="sm" name={user.name || user.email} as={MenuButton}></Avatar>
       <MenuList>
         <MenuItem>
           {"Organization: "}
