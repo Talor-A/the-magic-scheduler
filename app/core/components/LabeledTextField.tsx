@@ -1,5 +1,5 @@
 import { forwardRef, PropsWithoutRef } from "react"
-import { useField } from "react-final-form"
+import { useField, useFormikContext, ErrorMessage } from "formik"
 
 export interface LabeledTextFieldProps extends PropsWithoutRef<JSX.IntrinsicElements["input"]> {
   /** Field name. */
@@ -13,27 +13,23 @@ export interface LabeledTextFieldProps extends PropsWithoutRef<JSX.IntrinsicElem
 
 export const LabeledTextField = forwardRef<HTMLInputElement, LabeledTextFieldProps>(
   ({ name, label, outerProps, ...props }, ref) => {
-    const {
-      input,
-      meta: { touched, error, submitError, submitting },
-    } = useField(name, {
-      parse: props.type === "number" ? Number : undefined,
-    })
-
-    const normalizedError = Array.isArray(error) ? error.join(", ") : error || submitError
+    const [input] = useField(name)
+    const { isSubmitting } = useFormikContext()
 
     return (
       <div {...outerProps}>
         <label>
           {label}
-          <input {...input} disabled={submitting} {...props} ref={ref} />
+          <input {...input} disabled={isSubmitting} {...props} ref={ref} />
         </label>
 
-        {touched && normalizedError && (
-          <div role="alert" style={{ color: "red" }}>
-            {normalizedError}
-          </div>
-        )}
+        <ErrorMessage name={name}>
+          {(msg) => (
+            <div role="alert" style={{ color: "red" }}>
+              {msg}
+            </div>
+          )}
+        </ErrorMessage>
 
         <style jsx>{`
           label {
