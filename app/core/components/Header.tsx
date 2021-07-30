@@ -25,6 +25,7 @@ import logout from "app/auth/mutations/logout"
 import { useCurrentUser, useLoggedInUser } from "../hooks/useCurrentUser"
 import { Suspense } from "react"
 import { useCurrentOrg } from "../hooks/useOrganization"
+import { CalendarIcon } from "@chakra-ui/icons"
 
 type IBreadCrumb = {
   to: RouteUrlObject
@@ -64,9 +65,10 @@ const UserMenu = () => {
 }
 
 export const Header = ({ breadcrumbs }: HeaderProps) => {
-  // const { colorMode, toggleColorMode } = useColorMode()
+  const { colorMode, toggleColorMode } = useColorMode()
 
-  const bg = useColorModeValue("gray.100", "gray.800")
+  const bg = useColorModeValue("gray.50", "gray.800")
+  const underline = useColorModeValue("gray.100", "gray.900")
 
   return (
     <chakra.header
@@ -74,25 +76,29 @@ export const Header = ({ breadcrumbs }: HeaderProps) => {
       px={{ base: 2, sm: 4 }}
       py={3}
       bg={bg}
-      borderBottomColor={"gray.900"}
+      borderBottomColor={underline}
       borderBottomWidth={"1px"}
       borderBottomStyle="solid"
       shadow="md"
     >
       <Flex alignItems="center" justifyContent="space-between">
-        {breadcrumbs ? (
-          <Breadcrumb separator={<ChevronRightIcon />}>
-            {breadcrumbs.map(({ to, name, active }) => (
-              <BreadcrumbItem key={to.toString()}>
-                <Link href={to} passHref>
-                  <BreadcrumbLink fontWeight={active ? "bold" : undefined}>{name}</BreadcrumbLink>
-                </Link>
-              </BreadcrumbItem>
-            ))}
-          </Breadcrumb>
-        ) : (
-          <div />
-        )}
+        <HStack ml={4}>
+          <CalendarIcon color="green.600" />
+
+          {breadcrumbs ? (
+            <Breadcrumb separator={<ChevronRightIcon />}>
+              {breadcrumbs.map(({ to, name, active }) => (
+                <BreadcrumbItem key={to.toString()}>
+                  <Link href={to} passHref>
+                    <BreadcrumbLink fontWeight={active ? "bold" : undefined}>{name}</BreadcrumbLink>
+                  </Link>
+                </BreadcrumbItem>
+              ))}
+            </Breadcrumb>
+          ) : (
+            <div />
+          )}
+        </HStack>
 
         <HStack spacing={3} alignItems="center">
           <InputGroup>
@@ -102,11 +108,11 @@ export const Header = ({ breadcrumbs }: HeaderProps) => {
             <Input variant="filled" type="tel" placeholder="Search..." />
           </InputGroup>
 
-          {/* <ButtonGroup spacing={0}>
+          <ButtonGroup spacing={0}>
             <IconButton bg={"transparent"} aria-label="Switch Theme" onClick={toggleColorMode}>
               {colorMode === "light" ? <SunIcon /> : <MoonIcon />}
             </IconButton>
-          </ButtonGroup> */}
+          </ButtonGroup>
 
           <Suspense fallback={<Avatar size="sm" />}>
             <UserMenu />

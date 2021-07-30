@@ -1,13 +1,22 @@
 import { resolver, SecurePassword, AuthenticationError } from "blitz"
 import db from "db"
 import { Login } from "../validations"
-import { Role } from "types"
-import invariant from "tiny-invariant"
 
 export const authenticateUser = async (rawEmail: string, rawPassword: string) => {
   const email = rawEmail.toLowerCase().trim()
   const password = rawPassword.trim()
-  const user = await db.user.findFirst({ where: { email }, include: { memberships: true } })
+  const user = await db.user.findFirst({
+    where: { email },
+    include: {
+      memberships: {
+        where: {
+          user: {
+            email,
+          },
+        },
+      },
+    },
+  })
   if (!user) throw new AuthenticationError()
 
   const result = await SecurePassword.verify(user.hashedPassword, password)

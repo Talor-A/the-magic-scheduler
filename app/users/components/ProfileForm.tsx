@@ -16,10 +16,8 @@ export const ProfileForm = (props: ProfileFormProps) => {
 
   return (
     <div>
-      <h1>Create an Account</h1>
-
       <Form
-        submitText="Create Account"
+        submitText="Update Profile"
         schema={UpdateProfile}
         initialValues={{ name: user.name ?? "" }}
         onSubmit={async (values) => {
@@ -32,6 +30,7 @@ export const ProfileForm = (props: ProfileFormProps) => {
           }
         }}
       >
+        <LabeledTextField disabled name="email" label="Email" value={user.email} />
         <LabeledTextField name="name" label="Name" placeholder="Your Name" />
       </Form>
     </div>
