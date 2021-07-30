@@ -2,7 +2,8 @@
   "name": "the-magic-scheduler",
   "version": "1.0.0",
   "scripts": {
-    "dev": "blitz build && blitz dev",
+    "dev": "blitz dev",
+    "dev:build": "blitz build && blitz dev",
     "build": "yarn migrate:deploy && blitz build",
     "start": "blitz start --port ${PORT-3000}",
     "migrate:create": "blitz prisma migrate dev --create-only",
