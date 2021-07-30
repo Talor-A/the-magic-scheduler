@@ -16,6 +16,7 @@ import {
   MenuItem,
   MenuList,
   useColorMode,
+  useColorModeValue,
   ButtonGroup,
 } from "@chakra-ui/react"
 // import { useSyncStatus } from "../contexts/replicache.provider"
@@ -65,14 +66,18 @@ const UserMenu = () => {
 export const Header = ({ breadcrumbs }: HeaderProps) => {
   // const { colorMode, toggleColorMode } = useColorMode()
 
+  const bg = useColorModeValue("gray.100", "gray.800")
+
   return (
     <chakra.header
       w="full"
       px={{ base: 2, sm: 4 }}
       py={3}
+      bg={bg}
       borderBottomColor={"gray.900"}
       borderBottomWidth={"1px"}
       borderBottomStyle="solid"
+      shadow="md"
     >
       <Flex alignItems="center" justifyContent="space-between">
         {breadcrumbs ? (

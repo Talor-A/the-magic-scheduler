@@ -120,9 +120,11 @@ Dashboard.suppressFirstRenderFlicker = true
 Dashboard.getLayout = (page) => (
   <Layout title="Dashboard">
     <Suspense fallback={<div>Loading...</div>}>
-      <Header />
-      <Flex minH={"100vh"} p={8} align="stretch">
-        <Stack spacing={8}>{page}</Stack>
+      <Flex flexDir="column" minH={"100vh"} align="stretch">
+        <Header />
+        <Stack spacing={8} p={8}>
+          {page}
+        </Stack>
       </Flex>
     </Suspense>
   </Layout>
