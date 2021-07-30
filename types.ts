@@ -8,7 +8,7 @@ declare module "blitz" {
     session: SessionContext
   }
   export interface Session {
-    isAuthorized: SimpleRolesIsAuthorized<GlobalRole>
+    isAuthorized: SimpleRolesIsAuthorized<Role>
     PublicData: {
       userId: User["id"]
       roles: Array<Role>
