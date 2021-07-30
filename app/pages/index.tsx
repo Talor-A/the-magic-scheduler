@@ -1,268 +1,121 @@
-import { Suspense } from "react"
+import { ReactNode, Suspense } from "react"
 import { Link, BlitzPage, useMutation, Routes } from "blitz"
 import Layout from "app/core/layouts/Layout"
 import { useCurrentUser } from "app/core/hooks/useCurrentUser"
 import logout from "app/auth/mutations/logout"
 
-/*
- * This file is just for a pleasant getting started page for your new app.
- * You can delete everything in here and start from scratch if you like.
- */
+import Head from "next/head"
+import {
+  Box,
+  Heading,
+  Container,
+  Text,
+  Button,
+  Stack,
+  Icon,
+  useColorModeValue,
+  createIcon,
+} from "@chakra-ui/react"
 
-const UserInfo = () => {
-  const currentUser = useCurrentUser()
-  const [logoutMutation] = useMutation(logout)
+const CallToActionWithAnnotation = () => {
+  return (
+    <>
+      <Head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap"
+          rel="stylesheet"
+        />
+      </Head>
 
-  if (currentUser) {
-    return (
-      <>
-        <button
-          className="button small"
-          onClick={async () => {
-            await logoutMutation()
-          }}
+      <Container maxW={"3xl"}>
+        <Stack
+          as={Box}
+          textAlign={"center"}
+          spacing={{ base: 8, md: 14 }}
+          py={{ base: 20, md: 36 }}
         >
-          Logout
-        </button>
-        <div>
-          User id: <code>{currentUser.id}</code>
-          <br />
-          User role: <code>{currentUser.role}</code>
-        </div>
-      </>
-    )
-  } else {
-    return (
-      <>
-        <Link href={Routes.SignupPage()}>
-          <a className="button small">
-            <strong>Sign Up</strong>
-          </a>
-        </Link>
-        <Link href={Routes.LoginPage()}>
-          <a className="button small">
-            <strong>Login</strong>
-          </a>
-        </Link>
-      </>
-    )
-  }
+          <Heading
+            fontWeight={600}
+            fontSize={{ base: "2xl", sm: "4xl", md: "6xl" }}
+            lineHeight={"110%"}
+          >
+            Class scheduling <br />
+            <Text as={"span"} color={"green.400"}>
+              made easy
+            </Text>
+          </Heading>
+          <Text color={"gray.500"}>
+            Never miss a class. Never be late for one too. Keep track of your meetings and receive
+            smart reminders in appropriate times.
+          </Text>
+          <Stack
+            direction={"column"}
+            spacing={3}
+            align={"center"}
+            alignSelf={"center"}
+            position={"relative"}
+          >
+            <Link passHref href={Routes.LoginPage()}>
+              <Button
+                as="a"
+                colorScheme={"green"}
+                bg={"green.400"}
+                rounded={"full"}
+                px={6}
+                _hover={{
+                  bg: "green.500",
+                }}
+              >
+                Get Started
+              </Button>
+            </Link>
+            <Link passHref href={Routes.SignupPage()}>
+              <Button as="a" variant={"link"} colorScheme={"blue"} size={"sm"}>
+                Have an account? Sign in
+              </Button>
+            </Link>
+            <Box>
+              <Icon
+                as={Arrow}
+                color={useColorModeValue("gray.800", "gray.300")}
+                w={71}
+                position={"absolute"}
+                right={-71}
+                top={"10px"}
+              />
+              <Text
+                fontSize={"lg"}
+                fontFamily={"Caveat"}
+                position={"absolute"}
+                right={"-100px"}
+                top={"-15px"}
+                transform={"rotate(10deg)"}
+              >
+                {"For Free!"}
+              </Text>
+            </Box>
+          </Stack>
+        </Stack>
+      </Container>
+    </>
+  )
 }
 
+const Arrow = createIcon({
+  displayName: "Arrow",
+  viewBox: "0 0 72 24",
+  path: (
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M0.600904 7.08166C0.764293 6.8879 1.01492 6.79004 1.26654 6.82177C2.83216 7.01918 5.20326 7.24581 7.54543 7.23964C9.92491 7.23338 12.1351 6.98464 13.4704 6.32142C13.84 6.13785 14.2885 6.28805 14.4722 6.65692C14.6559 7.02578 14.5052 7.47362 14.1356 7.6572C12.4625 8.48822 9.94063 8.72541 7.54852 8.7317C5.67514 8.73663 3.79547 8.5985 2.29921 8.44247C2.80955 9.59638 3.50943 10.6396 4.24665 11.7384C4.39435 11.9585 4.54354 12.1809 4.69301 12.4068C5.79543 14.0733 6.88128 15.8995 7.1179 18.2636C7.15893 18.6735 6.85928 19.0393 6.4486 19.0805C6.03792 19.1217 5.67174 18.8227 5.6307 18.4128C5.43271 16.4346 4.52957 14.868 3.4457 13.2296C3.3058 13.0181 3.16221 12.8046 3.01684 12.5885C2.05899 11.1646 1.02372 9.62564 0.457909 7.78069C0.383671 7.53862 0.437515 7.27541 0.600904 7.08166ZM5.52039 10.2248C5.77662 9.90161 6.24663 9.84687 6.57018 10.1025C16.4834 17.9344 29.9158 22.4064 42.0781 21.4773C54.1988 20.5514 65.0339 14.2748 69.9746 0.584299C70.1145 0.196597 70.5427 -0.0046455 70.931 0.134813C71.3193 0.274276 71.5206 0.70162 71.3807 1.08932C66.2105 15.4159 54.8056 22.0014 42.1913 22.965C29.6185 23.9254 15.8207 19.3142 5.64226 11.2727C5.31871 11.0171 5.26415 10.5479 5.52039 10.2248Z"
+      fill="currentColor"
+    />
+  ),
+})
+
 const Home: BlitzPage = () => {
-  return (
-    <div className="container">
-      <main>
-        <div className="logo">
-          <img src="/logo.png" alt="blitz.js" />
-        </div>
-        <p>
-          <strong>Congrats!</strong> Your app is ready, including user sign-up and log-in.
-        </p>
-        <div className="buttons" style={{ marginTop: "1rem", marginBottom: "1rem" }}>
-          <Suspense fallback="Loading...">
-            <UserInfo />
-          </Suspense>
-        </div>
-        <p>
-          <strong>
-            To add a new model to your app, <br />
-            run the following in your terminal:
-          </strong>
-        </p>
-        <pre>
-          <code>blitz generate all project name:string</code>
-        </pre>
-        <div style={{ marginBottom: "1rem" }}>(And select Yes to run prisma migrate)</div>
-        <div>
-          <p>
-            Then <strong>restart the server</strong>
-          </p>
-          <pre>
-            <code>Ctrl + c</code>
-          </pre>
-          <pre>
-            <code>blitz dev</code>
-          </pre>
-          <p>
-            and go to{" "}
-            <Link href="/projects">
-              <a>/projects</a>
-            </Link>
-          </p>
-        </div>
-        <div className="buttons" style={{ marginTop: "5rem" }}>
-          <a
-            className="button"
-            href="https://blitzjs.com/docs/getting-started?utm_source=blitz-new&utm_medium=app-template&utm_campaign=blitz-new"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-          <a
-            className="button-outline"
-            href="https://github.com/blitz-js/blitz"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Github Repo
-          </a>
-          <a
-            className="button-outline"
-            href="https://discord.blitzjs.com"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Discord Community
-          </a>
-        </div>
-      </main>
-
-      <footer>
-        <a
-          href="https://blitzjs.com?utm_source=blitz-new&utm_medium=app-template&utm_campaign=blitz-new"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by Blitz.js
-        </a>
-      </footer>
-
-      <style jsx global>{`
-        @import url("https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;700&display=swap");
-
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          font-family: "Libre Franklin", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-            Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-        }
-
-        * {
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-          box-sizing: border-box;
-        }
-        .container {
-          min-height: 100vh;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        main {
-          padding: 5rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        main p {
-          font-size: 1.2rem;
-        }
-
-        p {
-          text-align: center;
-        }
-
-        footer {
-          width: 100%;
-          height: 60px;
-          border-top: 1px solid #eaeaea;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          background-color: #45009d;
-        }
-
-        footer a {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        footer a {
-          color: #f4f4f4;
-          text-decoration: none;
-        }
-
-        .logo {
-          margin-bottom: 2rem;
-        }
-
-        .logo img {
-          width: 300px;
-        }
-
-        .buttons {
-          display: grid;
-          grid-auto-flow: column;
-          grid-gap: 0.5rem;
-        }
-        .button {
-          font-size: 1rem;
-          background-color: #6700eb;
-          padding: 1rem 2rem;
-          color: #f4f4f4;
-          text-align: center;
-        }
-
-        .button.small {
-          padding: 0.5rem 1rem;
-        }
-
-        .button:hover {
-          background-color: #45009d;
-        }
-
-        .button-outline {
-          border: 2px solid #6700eb;
-          padding: 1rem 2rem;
-          color: #6700eb;
-          text-align: center;
-        }
-
-        .button-outline:hover {
-          border-color: #45009d;
-          color: #45009d;
-        }
-
-        pre {
-          background: #fafafa;
-          border-radius: 5px;
-          padding: 0.75rem;
-          text-align: center;
-        }
-        code {
-          font-size: 0.9rem;
-          font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
-            Bitstream Vera Sans Mono, Courier New, monospace;
-        }
-
-        .grid {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-wrap: wrap;
-
-          max-width: 800px;
-          margin-top: 3rem;
-        }
-
-        @media (max-width: 600px) {
-          .grid {
-            width: 100%;
-            flex-direction: column;
-          }
-        }
-      `}</style>
-    </div>
-  )
+  return <CallToActionWithAnnotation />
 }
 
 Home.suppressFirstRenderFlicker = true
