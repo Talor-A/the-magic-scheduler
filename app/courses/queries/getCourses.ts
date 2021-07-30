@@ -6,8 +6,11 @@ interface GetCoursesInput
 
 export default resolver.pipe(
   resolver.authorize(),
-  async ({ where, orderBy, skip = 0, take = 100 }: GetCoursesInput) => {
-    // TODO: in multi-tenant app, you must add validation to ensure correct tenant
+  async ({ where, orderBy, skip = 0, take = 100 }: GetCoursesInput, ctx) => {
+    const currentOrgWhere: Prisma.CourseFindManyArgs["where"] = {
+      organizationId: ctx.session.orgId,
+    }
+
     const {
       items: courses,
       hasMore,
@@ -16,8 +19,17 @@ export default resolver.pipe(
     } = await paginate({
       skip,
       take,
-      count: () => db.course.count({ where }),
-      query: (paginateArgs) => db.course.findMany({ ...paginateArgs, where, orderBy }),
+      count: () => db.course.count({ where: { ...where, ...currentOrgWhere } }),
+      query: (paginateArgs) =>
+        db.course.findMany({
+          ...paginateArgs,
+          where: {
+            ...where,
+            ...currentOrgWhere,
+          },
+
+          orderBy,
+        }),
     })
 
     return {
