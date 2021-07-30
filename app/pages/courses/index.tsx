@@ -13,6 +13,7 @@ import {
   Tr,
   useColorModeValue,
 } from "@chakra-ui/react"
+import { Header } from "app/core/components/Header"
 
 const ITEMS_PER_PAGE = 100
 
@@ -75,6 +76,12 @@ const CoursesPage: BlitzPage = () => {
 }
 
 CoursesPage.authenticate = true
-CoursesPage.getLayout = (page) => <Layout>{page}</Layout>
+CoursesPage.getLayout = (page) => (
+  <Layout>
+    <Header />
+
+    {page}
+  </Layout>
+)
 
 export default CoursesPage
