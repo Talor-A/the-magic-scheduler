@@ -1,4 +1,3 @@
-import { ChevronRightIcon, SearchIcon, MoonIcon, SunIcon } from "@chakra-ui/icons"
 import {
   chakra,
   Flex,
@@ -25,7 +24,8 @@ import logout from "app/auth/mutations/logout"
 import { useCurrentUser, useLoggedInUser } from "../hooks/useCurrentUser"
 import { Suspense } from "react"
 import { useCurrentOrg } from "../hooks/useOrganization"
-import { CalendarIcon } from "@chakra-ui/icons"
+import { FiCalendar, FiChevronRight, FiMoon, FiSearch, FiSun } from "react-icons/fi"
+import { Icon } from "@chakra-ui/react"
 
 type IBreadCrumb = {
   to: RouteUrlObject
@@ -89,10 +89,10 @@ export const Header = ({ breadcrumbs }: HeaderProps) => {
     >
       <Flex alignItems="center" justifyContent="space-between">
         <HStack ml={4}>
-          <CalendarIcon color="green.600" />
+          <Icon as={FiCalendar} color="green.600" />
 
           {breadcrumbs ? (
-            <Breadcrumb separator={<ChevronRightIcon />}>
+            <Breadcrumb separator={<Icon as={FiChevronRight} />}>
               {breadcrumbs.map(({ to, name, active }) => (
                 <BreadcrumbItem key={to.toString()}>
                   <Link href={to} passHref>
@@ -109,14 +109,14 @@ export const Header = ({ breadcrumbs }: HeaderProps) => {
         <HStack spacing={3} alignItems="center">
           <InputGroup>
             <InputLeftElement pointerEvents="none">
-              <SearchIcon />
+              <Icon as={FiSearch} />
             </InputLeftElement>
             <Input variant="filled" type="tel" placeholder="Search..." />
           </InputGroup>
 
           <ButtonGroup spacing={0}>
             <IconButton bg={"transparent"} aria-label="Switch Theme" onClick={toggleColorMode}>
-              {colorMode === "light" ? <SunIcon /> : <MoonIcon />}
+              {colorMode === "light" ? <Icon as={FiSun} /> : <Icon as={FiMoon} />}
             </IconButton>
           </ButtonGroup>
 

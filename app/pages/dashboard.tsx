@@ -1,4 +1,3 @@
-import { EditIcon } from "@chakra-ui/icons"
 import {
   Alert,
   AlertIcon,
@@ -17,13 +16,13 @@ import {
   Heading,
   IconButton,
   ButtonGroup,
-  Input,
-  FormControl,
-  Divider,
+  Icon,
   HStack,
+  Divider,
 } from "@chakra-ui/react"
 import { Header } from "app/core/components/Header"
 import LabeledTextField from "app/core/components/LabeledTextField"
+import SidebarWithHeader from "app/core/components/Sidebar"
 import { useLoggedInUser } from "app/core/hooks/useCurrentUser"
 import Layout from "app/core/layouts/Layout"
 import acceptInvite from "app/organizations/mutations/acceptInvite"
@@ -34,6 +33,7 @@ import { BlitzPage, useMutation, useQuery, useSession, validateZodSchema } from 
 import { Membership, MembershipRole, Organization } from "db"
 import { Formik } from "formik"
 import React, { Suspense } from "react"
+import { FiEdit } from "react-icons/fi"
 
 const Invite = (invitation: Membership & { organization: Organization }) => {
   const [accept, { isLoading }] = useMutation(acceptInvite)
@@ -73,7 +73,15 @@ const TeamList = () => {
   const [team] = useQuery(getTeam, null)
 
   return (
-    <Box rounded="lg" border="1px solid" borderColor="gray.200" px={4} py={6} shadow="md">
+    <Box
+      rounded="lg"
+      border="1px solid"
+      borderColor={useColorModeValue("gray.200", "gray.900")}
+      bg={useColorModeValue("gray.50", "gray.700")}
+      px={4}
+      py={6}
+      shadow="md"
+    >
       <Heading ml={5}>My Team</Heading>
       <Table>
         <Thead>
@@ -91,7 +99,7 @@ const TeamList = () => {
               <Td>{member.user.email}</Td>
               <Td>{member.user.pending ? "Invited" : member.role}</Td>
               <Td>
-                <IconButton icon={<EditIcon />} aria-label="Edit" onClick={() => {}} />
+                <IconButton icon={<Icon as={FiEdit} />} aria-label="Edit" onClick={() => {}} />
               </Td>
             </Tr>
           ))}
@@ -185,12 +193,11 @@ Dashboard.suppressFirstRenderFlicker = true
 Dashboard.getLayout = (page) => (
   <Layout title="Dashboard">
     <Suspense fallback={<div>Loading...</div>}>
-      <Flex flexDir="column" minH={"100vh"} align="stretch">
-        <Header />
+      <SidebarWithHeader>
         <Stack spacing={8} p={8}>
           {page}
         </Stack>
-      </Flex>
+      </SidebarWithHeader>
     </Suspense>
   </Layout>
 )

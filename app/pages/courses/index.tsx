@@ -14,6 +14,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react"
 import { Header } from "app/core/components/Header"
+import SidebarWithHeader from "app/core/components/Sidebar"
 
 const ITEMS_PER_PAGE = 100
 
@@ -78,9 +79,7 @@ const CoursesPage: BlitzPage = () => {
 CoursesPage.authenticate = true
 CoursesPage.getLayout = (page) => (
   <Layout>
-    <Header />
-
-    {page}
+    <SidebarWithHeader>{page}</SidebarWithHeader>
   </Layout>
 )
 

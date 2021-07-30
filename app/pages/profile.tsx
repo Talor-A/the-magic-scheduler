@@ -4,6 +4,7 @@ import { BlitzPage, useMutation } from "blitz"
 import changeMyName from "app/users/mutations/changeMyName"
 import ProfileForm from "app/users/components/ProfileForm"
 import { Suspense } from "react"
+import SidebarWithHeader from "app/core/components/Sidebar"
 
 const Profile: BlitzPage = () => {
   return (
@@ -14,7 +15,11 @@ const Profile: BlitzPage = () => {
 }
 
 Profile.suppressFirstRenderFlicker = true
-Profile.getLayout = (page) => <Layout title="Profile">{page}</Layout>
+Profile.getLayout = (page) => (
+  <Layout title="Profile">
+    <SidebarWithHeader>{page}</SidebarWithHeader>
+  </Layout>
+)
 Profile.authenticate = {
   redirectTo: "/login",
 }
