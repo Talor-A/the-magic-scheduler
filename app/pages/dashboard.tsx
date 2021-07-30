@@ -14,19 +14,23 @@ const InvitationsList = () => {
     <>
       invitations:
       {invitations.map((invitation) => (
-        <chakra.div key={invitation.id}>{invitation.role}</chakra.div>
+        <chakra.div key={invitation.id}>
+          You have been invited to {invitation.organization.name} as role: {invitation.role}.
+        </chakra.div>
       ))}
       {!invitations.length && <chakra.div>No invitations</chakra.div>}
     </>
   )
 }
 const TeamList = () => {
-  const [team] = useQuery(getTeam, null)
+  const [team] = useQuery(getTeam, null, {
+    suspense: false,
+  })
 
   return (
     <>
       My Team:
-      {team.map((member) => (
+      {team?.map((member) => (
         <chakra.div key={member.id}>
           {member.user.name} {member.user.email} {member.user.pending ? "Pending" : member.role}
         </chakra.div>

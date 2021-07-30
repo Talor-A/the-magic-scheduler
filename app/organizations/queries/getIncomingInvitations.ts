@@ -9,6 +9,9 @@ export default resolver.pipe(resolver.authorize(), async (_ = null, ctx) => {
     where: {
       invitedEmail: user.email,
     },
+    include: {
+      organization: true,
+    },
   })
   return invitations
 })
