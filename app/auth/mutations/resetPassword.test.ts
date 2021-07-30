@@ -14,8 +14,6 @@ const mockCtx: any = {
 
 describe("resetPassword mutation", () => {
   it("works correctly", async () => {
-    expect(true).toBe(true)
-
     // Create test user
     const goodToken = "randomPasswordResetToken"
     const expiredToken = "expiredRandomPasswordResetToken"
@@ -27,6 +25,17 @@ describe("resetPassword mutation", () => {
     const user = await db.user.create({
       data: {
         email: "user@example.com",
+        role: "CUSTOMER",
+        memberships: {
+          create: {
+            role: "ADMIN",
+            organization: {
+              create: {
+                name: "Test Organization",
+              },
+            },
+          },
+        },
         tokens: {
           // Create old token to ensure it's deleted
           create: [
