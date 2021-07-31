@@ -34,6 +34,8 @@ model Membership {
   invitedName  String?
   invitedEmail String?
 
+  Event   Event? @relation(fields: [eventId], references: [id])
+  eventId Int?
   @@unique([organizationId, invitedEmail])
 }
 
@@ -62,7 +64,6 @@ model User {
   memberships Membership[]
   Session     Session[]
   tokens      Token[]
-  sections    Section[]
 
 }
 
@@ -101,20 +102,40 @@ enum TokenType {
 }
 
 model Course {
-  id             Int          @id @default(autoincrement())
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  name           String
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+
   organization   Organization @relation(fields: [organizationId], references: [id])
-  Section        Section[]
   organizationId Int
+
+  events Event[]
 }
 
-model Section {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  instructors User[]
-  course      Course   @relation(fields: [courseId], references: [id])
+enum Days {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+model Event {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  course      Course       @relation(fields: [courseId], references: [id])
   courseId    Int
+  instructors Membership[]
+
+  startDate DateTime?
+  endDate   DateTime?
+  startTime DateTime?
+  endTime   DateTime?
+  allDay    Boolean   @default(false)
+  days      Days[]
 }

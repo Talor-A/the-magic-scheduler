@@ -2,17 +2,17 @@ import { resolver } from "blitz"
 import db from "db"
 import { z } from "zod"
 
-const UpdateSection = z.object({
+const DeleteEvent = z.object({
   id: z.number(),
 })
 
 export default resolver.pipe(
-  resolver.zod(UpdateSection),
+  resolver.zod(DeleteEvent),
   resolver.authorize(),
   async ({ id }, ctx) => {
     // TODO: in multi-tenant app, you must add validation to ensure correct tenant
-    const section = await db.section.update({ where: { id }, data: {} })
+    const event = await db.event.update({ where: { id }, data: {} })
 
-    return section
+    return event
   }
 )

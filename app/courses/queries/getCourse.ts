@@ -13,9 +13,20 @@ export default resolver.pipe(resolver.zod(GetCourse), resolver.authorize(), asyn
   const course = await db.course.findFirst({
     where: { id, organizationId: ctx.session.orgId },
     include: {
-      Section: {
+      events: {
         include: {
-          instructors: true,
+          instructors: {
+            include: {
+              user: true,
+            },
+            where: {
+              NOT: [
+                {
+                  user: null,
+                },
+              ],
+            },
+          },
         },
       },
     },

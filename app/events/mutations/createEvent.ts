@@ -3,13 +3,13 @@ import db from "db"
 import invariant from "tiny-invariant"
 import { z } from "zod"
 
-const CreateSection = z.object({
+const CreateEvent = z.object({
   courseId: z.number(),
   instructorIds: z.array(z.number()).optional(),
 })
 
 export default resolver.pipe(
-  resolver.zod(CreateSection),
+  resolver.zod(CreateEvent),
   resolver.authorize(),
   async ({ courseId, instructorIds = [] }, ctx) => {
     const { orgId: organizationId } = ctx.session
@@ -33,7 +33,7 @@ export default resolver.pipe(
       },
     })
 
-    const section = await db.section.create({
+    const event = await db.event.create({
       data: {
         course: {
           connect: course,
@@ -44,6 +44,6 @@ export default resolver.pipe(
       },
     })
 
-    return section
+    return event
   }
 )
