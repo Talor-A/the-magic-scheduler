@@ -34,6 +34,7 @@ import {
 import { IconType } from "react-icons"
 import { ReactText } from "react"
 import { Routes, RouteUrlObject, Link, useRouter } from "blitz"
+import { useIsActive } from "../hooks/useIsActive"
 
 interface LinkItemProps {
   name: string
@@ -111,16 +112,6 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       ))}
     </Box>
   )
-}
-
-const useIsActive = (href?: string) => {
-  const router = useRouter()
-
-  if (!href) {
-    return false
-  }
-
-  return router && router.pathname === href
 }
 
 interface NavItemProps extends FlexProps {
