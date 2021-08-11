@@ -35,7 +35,7 @@ export const EventForm = ({ courseId, ...props }: EventFormProps) => {
           }
         }}
       >
-        <LabeledSelectField name="instructorIds" label="Instructor">
+        <LabeledSelectField multiple name="instructorIds" label="Instructor">
           <option value="">Select an instructor</option>
           {instructors.map((instructor) => (
             <option value={instructor.id} key={instructor.id}>

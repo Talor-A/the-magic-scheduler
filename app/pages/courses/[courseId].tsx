@@ -1,14 +1,27 @@
 import { Suspense } from "react"
-import { Head, Link, useRouter, useQuery, useParam, BlitzPage, useMutation, Routes } from "blitz"
+import {
+  Head,
+  Link,
+  useRouter,
+  useQuery,
+  useParam,
+  BlitzPage,
+  useMutation,
+  Routes,
+  GetServerSideProps,
+} from "blitz"
 import Layout from "app/core/layouts/Layout"
 import getCourse from "app/courses/queries/getCourse"
 import deleteCourse from "app/courses/mutations/deleteCourse"
 import SidebarWithHeader from "app/core/components/Sidebar"
 import { Box, Button, Heading, HStack } from "@chakra-ui/react"
 
-export const Course = () => {
+export interface CourseProps {
+  courseId: number
+}
+export const Course = (props: CourseProps) => {
   const router = useRouter()
-  const courseId = useParam("courseId", "number")
+  const courseId = useParam("courseId", "number") || props.courseId
   const [deleteCourseMutation] = useMutation(deleteCourse)
   const [course] = useQuery(getCourse, { id: courseId })
 
@@ -37,7 +50,12 @@ export const Course = () => {
           </Button>
         </HStack>
 
-        <Link passHref href={Routes.NewEventPage()}>
+        <Link
+          passHref
+          href={Routes.NewEventPage({
+            courseId,
+          })}
+        >
           <Button as="a" colorScheme="green">
             Schedule
           </Button>
@@ -47,7 +65,7 @@ export const Course = () => {
   )
 }
 
-const ShowCoursePage: BlitzPage = () => {
+const ShowCoursePage: BlitzPage<CourseProps> = (props) => {
   return (
     <div>
       <p>
@@ -57,7 +75,7 @@ const ShowCoursePage: BlitzPage = () => {
       </p>
 
       <Suspense fallback={<div>Loading...</div>}>
-        <Course />
+        <Course {...props} />
       </Suspense>
     </div>
   )
@@ -69,5 +87,31 @@ ShowCoursePage.getLayout = (page) => (
     <SidebarWithHeader>{page}</SidebarWithHeader>
   </Layout>
 )
+// next.js server side function to parse params.courseId from undefined,string,or array safely
+// and return it as a number
+export const getServerSideProps: GetServerSideProps<CourseProps> = async ({ params, req, res }) => {
+  if (!params || typeof params.courseId !== "string")
+    return {
+      redirect: {
+        destination: Routes.CoursesPage().pathname,
+        permanent: true,
+      },
+    }
+  const courseId = parseInt(params.courseId, 10)
+
+  if (!Number.isSafeInteger(courseId))
+    return {
+      redirect: {
+        destination: Routes.CoursesPage().pathname,
+        permanent: true,
+      },
+    }
+
+  return {
+    props: {
+      courseId,
+    },
+  }
+}
 
 export default ShowCoursePage
