@@ -3,8 +3,12 @@ import { Head, Link, usePaginatedQuery, useRouter, BlitzPage, Routes } from "bli
 import Layout from "app/core/layouts/Layout"
 import getCourses from "app/courses/queries/getCourses"
 import {
+  Box,
+  Button,
   ButtonGroup,
   IconButton,
+  List,
+  ListItem,
   Table,
   Tbody,
   Td,
@@ -32,24 +36,26 @@ export const CoursesList = () => {
 
   return (
     <>
-      <div>
-        <ul>
+      <Box>
+        <Table my={4} rounded="xl" border="1px" borderColor="gray.500" spacing={4} p={4}>
           {courses.map((course) => (
-            <li key={course.id}>
-              <Link href={Routes.ShowCoursePage({ courseId: course.id })}>
-                <a>{course.name}</a>
-              </Link>
-            </li>
+            <Tr key={course.id}>
+              <Td>
+                <Link href={Routes.ShowCoursePage({ courseId: course.id })}>
+                  <a>{course.name}</a>
+                </Link>
+              </Td>
+            </Tr>
           ))}
-        </ul>
+        </Table>
 
-        <button disabled={page === 0} onClick={goToPreviousPage}>
+        <Button disabled={page === 0} onClick={goToPreviousPage}>
           Previous
-        </button>
-        <button disabled={!hasMore} onClick={goToNextPage}>
+        </Button>
+        <Button disabled={!hasMore} onClick={goToNextPage}>
           Next
-        </button>
-      </div>
+        </Button>
+      </Box>
     </>
   )
 }
@@ -64,7 +70,9 @@ const CoursesPage: BlitzPage = () => {
       <div>
         <p>
           <Link href={Routes.NewCoursePage()}>
-            <a>Create Course</a>
+            <Button as="a" colorScheme="green">
+              Create Course
+            </Button>
           </Link>
         </p>
 

@@ -52,7 +52,7 @@ const CallToActionWithAnnotation = () => {
             alignSelf={"center"}
             position={"relative"}
           >
-            <Link passHref href={Routes.LoginPage()}>
+            <Link passHref href={Routes.SignupPage()}>
               <Button
                 as="a"
                 colorScheme={"green"}
@@ -66,7 +66,7 @@ const CallToActionWithAnnotation = () => {
                 Get Started
               </Button>
             </Link>
-            <Link passHref href={Routes.SignupPage()}>
+            <Link passHref href={Routes.LoginPage()}>
               <Button as="a" variant={"link"} colorScheme={"blue"} size={"sm"}>
                 Have an account? Sign in
               </Button>

@@ -21,7 +21,7 @@ export default resolver.pipe(
     })
 
     return {
-      sections: events,
+      events,
       nextPage,
       hasMore,
       count,

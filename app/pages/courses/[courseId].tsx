@@ -3,6 +3,8 @@ import { Head, Link, useRouter, useQuery, useParam, BlitzPage, useMutation, Rout
 import Layout from "app/core/layouts/Layout"
 import getCourse from "app/courses/queries/getCourse"
 import deleteCourse from "app/courses/mutations/deleteCourse"
+import SidebarWithHeader from "app/core/components/Sidebar"
+import { Box, Button, Heading, HStack } from "@chakra-ui/react"
 
 export const Course = () => {
   const router = useRouter()
@@ -16,27 +18,31 @@ export const Course = () => {
         <title>Course {course.id}</title>
       </Head>
 
-      <div>
-        <h1>Course {course.id}</h1>
-        <pre>{JSON.stringify(course, null, 2)}</pre>
+      <Box>
+        <HStack>
+          <Heading flex={1}>{course.name}</Heading>
+          <Link href={Routes.EditCoursePage({ courseId: course.id })}>Edit</Link>
+          <Button
+            colorScheme="red"
+            type="button"
+            onClick={async () => {
+              if (window.confirm("This will be deleted")) {
+                await deleteCourseMutation({ id: course.id })
+                router.push(Routes.CoursesPage())
+              }
+            }}
+            style={{ marginLeft: "0.5rem" }}
+          >
+            Delete
+          </Button>
+        </HStack>
 
-        <Link href={Routes.EditCoursePage({ courseId: course.id })}>
-          <a>Edit</a>
+        <Link passHref href={Routes.NewEventPage()}>
+          <Button as="a" colorScheme="green">
+            Schedule
+          </Button>
         </Link>
-
-        <button
-          type="button"
-          onClick={async () => {
-            if (window.confirm("This will be deleted")) {
-              await deleteCourseMutation({ id: course.id })
-              router.push(Routes.CoursesPage())
-            }
-          }}
-          style={{ marginLeft: "0.5rem" }}
-        >
-          Delete
-        </button>
-      </div>
+      </Box>
     </>
   )
 }
@@ -58,6 +64,10 @@ const ShowCoursePage: BlitzPage = () => {
 }
 
 ShowCoursePage.authenticate = true
-ShowCoursePage.getLayout = (page) => <Layout>{page}</Layout>
+ShowCoursePage.getLayout = (page) => (
+  <Layout>
+    <SidebarWithHeader>{page}</SidebarWithHeader>
+  </Layout>
+)
 
 export default ShowCoursePage

@@ -1,11 +1,13 @@
 import { resolver } from "blitz"
-import db from "db"
+import db, { Days } from "db"
 import invariant from "tiny-invariant"
 import { z } from "zod"
 
-const CreateEvent = z.object({
+export const CreateEvent = z.object({
   courseId: z.number(),
   instructorIds: z.array(z.number()).optional(),
+
+  days: z.enum(Object.values(Days) as [keyof typeof Days, ...(keyof typeof Days)[]]).optional(),
 })
 
 export default resolver.pipe(

@@ -7,7 +7,9 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialActions"]
+
 }
 
 // --------------------------------------
@@ -113,6 +115,32 @@ model Course {
   events Event[]
 }
 
+model CalendarDate {
+  id Int @id @default(autoincrement())
+
+  eventStartId Int
+  startEvent   Event @relation("EventStartDate", fields: [eventStartId], references: [id], onDelete: Cascade)
+  eventEndId   Int
+  endEvent     Event @relation("EventEndDate", fields: [eventEndId], references: [id], onDelete: Cascade)
+
+  day   Int @default(1)
+  month Int @default(1)
+  year  Int @default(2021)
+}
+
+model Time {
+  id Int @id @default(autoincrement())
+
+  eventStartId Int
+  startEvent   Event @relation("EventStartTime", fields: [eventStartId], references: [id], onDelete: Cascade)
+  eventEndId   Int
+  endEvent     Event @relation("EventEndTime", fields: [eventEndId], references: [id], onDelete: Cascade)
+
+  hour   Int     @default(0)
+  minute Int     @default(0)
+  zone   String?
+}
+
 enum Days {
   MONDAY
   TUESDAY
@@ -128,14 +156,15 @@ model Event {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  course      Course       @relation(fields: [courseId], references: [id])
+  course      Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId    Int
   instructors Membership[]
 
-  startDate DateTime?
-  endDate   DateTime?
-  startTime DateTime?
-  endTime   DateTime?
-  allDay    Boolean   @default(false)
-  days      Days[]
+  start     CalendarDate? @relation("EventStartDate")
+  end       CalendarDate? @relation("EventEndDate")
+  startTime Time?         @relation("EventStartTime")
+  endTime   Time?         @relation("EventEndTime")
+
+  allDay Boolean @default(false)
+  days   Days[]
 }
