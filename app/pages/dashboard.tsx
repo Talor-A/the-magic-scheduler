@@ -23,7 +23,7 @@ import {
 import { Header } from "app/core/components/Header"
 import LabeledTextField from "app/core/components/LabeledTextField"
 import SidebarWithHeader from "app/core/components/Sidebar"
-import { useLoggedInUser } from "app/core/hooks/useCurrentUser"
+import { useLoggedInUser } from "app/users/hooks/useCurrentUser"
 import Layout from "app/core/layouts/Layout"
 import acceptInvite from "app/organizations/mutations/acceptInvite"
 import inviteUser, { InviteUser } from "app/organizations/mutations/inviteUser"

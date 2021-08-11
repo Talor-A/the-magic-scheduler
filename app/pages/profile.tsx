@@ -1,4 +1,4 @@
-import { useLoggedInUser } from "app/core/hooks/useCurrentUser"
+import { useLoggedInUser } from "app/users/hooks/useCurrentUser"
 import Layout from "app/core/layouts/Layout"
 import { BlitzPage, useMutation } from "blitz"
 import changeMyName from "app/users/mutations/changeMyName"

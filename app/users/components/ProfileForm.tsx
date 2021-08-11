@@ -3,7 +3,7 @@ import { LabeledTextField } from "app/core/components/LabeledTextField"
 import { Form, FORM_ERROR } from "app/core/components/Form"
 import changeMyName from "app/users/mutations/changeMyName"
 import { UpdateProfile } from "app/auth/validations"
-import { useLoggedInUser } from "app/core/hooks/useCurrentUser"
+import { useLoggedInUser } from "app/users/hooks/useCurrentUser"
 import getCurrentUser from "../queries/getCurrentUser"
 
 type ProfileFormProps = {

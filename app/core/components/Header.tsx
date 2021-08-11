@@ -21,9 +21,9 @@ import {
 // import { useSyncStatus } from "../contexts/replicache.provider"
 import { Link, Routes, RouteUrlObject, useMutation, useSession } from "blitz"
 import logout from "app/auth/mutations/logout"
-import { useCurrentUser, useLoggedInUser } from "../hooks/useCurrentUser"
+import { useCurrentUser, useLoggedInUser } from "../../users/hooks/useCurrentUser"
 import { Suspense } from "react"
-import { useCurrentOrg } from "../hooks/useOrganization"
+import { useCurrentOrg } from "../../organizations/hooks/useOrganization"
 import { FiCalendar, FiChevronRight, FiMoon, FiSearch, FiSun } from "react-icons/fi"
 import { Icon } from "@chakra-ui/react"
 
