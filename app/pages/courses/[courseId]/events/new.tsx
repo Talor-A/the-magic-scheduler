@@ -1,18 +1,10 @@
-import {
-  Link,
-  useRouter,
-  useMutation,
-  BlitzPage,
-  Routes,
-  useParam,
-  GetServerSideProps,
-} from "blitz"
+import { Link, useRouter, useMutation, BlitzPage, Routes, useParam } from "blitz"
 import Layout from "app/core/layouts/Layout"
 import createEvent from "app/events/mutations/createEvent"
 import SidebarWithHeader from "app/core/components/Sidebar"
 
 import { EventForm } from "app/events/components/EventForm"
-import invariant from "tiny-invariant"
+
 type Params = {
   courseId: string
 }
@@ -20,9 +12,7 @@ type Params = {
 const NewEventPage: BlitzPage<Params> = () => {
   const router = useRouter()
 
-  const courseId = useParam("courseId", "number")
-
-  invariant(courseId !== undefined, "courseId is required")
+  const courseId = useParam("courseId", "number")!
 
   const [createEventMutation] = useMutation(createEvent)
 
@@ -42,7 +32,7 @@ const NewEventPage: BlitzPage<Params> = () => {
       />
 
       <p>
-        <Link href={Routes.EventsPage()}>
+        <Link href={Routes.EventsPage({ courseId })}>
           <a>Events</a>
         </Link>
       </p>

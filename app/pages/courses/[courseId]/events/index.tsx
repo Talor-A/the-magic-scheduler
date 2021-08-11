@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { Head, Link, usePaginatedQuery, useRouter, BlitzPage, Routes } from "blitz"
+import { Head, Link, usePaginatedQuery, useRouter, BlitzPage, Routes, useParam } from "blitz"
 import Layout from "app/core/layouts/Layout"
 import getEvents from "app/events/queries/getEvents"
 
@@ -7,6 +7,8 @@ const ITEMS_PER_PAGE = 100
 
 export const EventsList = () => {
   const router = useRouter()
+  const courseId = useParam("courseId", "number")!
+
   const page = Number(router.query.page) || 0
   const [{ events, hasMore }] = usePaginatedQuery(getEvents, {
     orderBy: { id: "asc" },
@@ -22,7 +24,7 @@ export const EventsList = () => {
       <ul>
         {events.map((event) => (
           <li key={event.id}>
-            <Link href={Routes.ShowEventPage({ eventId: event.id })}>
+            <Link href={Routes.ShowEventPage({ eventId: event.id, courseId })}>
               <a>id: {event.id}</a>
             </Link>
             {JSON.stringify(event)}
@@ -41,6 +43,8 @@ export const EventsList = () => {
 }
 
 const EventsPage: BlitzPage = () => {
+  const courseId = useParam("courseId", "number")!
+
   return (
     <>
       <Head>
@@ -49,7 +53,7 @@ const EventsPage: BlitzPage = () => {
 
       <div>
         <p>
-          <Link href={Routes.NewEventPage()}>
+          <Link href={Routes.NewEventPage({ courseId })}>
             <a>Create Event</a>
           </Link>
         </p>
@@ -64,5 +68,6 @@ const EventsPage: BlitzPage = () => {
 
 EventsPage.authenticate = true
 EventsPage.getLayout = (page) => <Layout>{page}</Layout>
+EventsPage.suppressFirstRenderFlicker = true
 
 export default EventsPage

@@ -6,7 +6,8 @@ import deleteEvent from "app/events/mutations/deleteEvent"
 
 export const Event = () => {
   const router = useRouter()
-  const eventId = useParam("eventId", "number")
+  const eventId = useParam("eventId", "number")!
+  const courseId = useParam("courseId", "number")!
   const [deleteEventMutation] = useMutation(deleteEvent)
   const [event] = useQuery(getEvent, { id: eventId })
 
@@ -19,17 +20,17 @@ export const Event = () => {
       <div>
         <h1>Event {event.id}</h1>
         <pre>{JSON.stringify(event, null, 2)}</pre>
-
+        {/*
         <Link href={Routes.EditEventPage({ eventId: event.id })}>
           <a>Edit</a>
-        </Link>
+        </Link> */}
 
         <button
           type="button"
           onClick={async () => {
             if (window.confirm("This will be deleted")) {
               await deleteEventMutation({ id: event.id })
-              router.push(Routes.EventsPage())
+              router.push(Routes.ShowCoursePage({ courseId }))
             }
           }}
           style={{ marginLeft: "0.5rem" }}
@@ -42,10 +43,12 @@ export const Event = () => {
 }
 
 const ShowEventPage: BlitzPage = () => {
+  const courseId = useParam("courseId", "number")!
+
   return (
     <div>
       <p>
-        <Link href={Routes.EventsPage()}>
+        <Link href={Routes.ShowCoursePage({ courseId })}>
           <a>Events</a>
         </Link>
       </p>
@@ -59,5 +62,6 @@ const ShowEventPage: BlitzPage = () => {
 
 ShowEventPage.authenticate = true
 ShowEventPage.getLayout = (page) => <Layout>{page}</Layout>
+ShowEventPage.suppressFirstRenderFlicker = true
 
 export default ShowEventPage
