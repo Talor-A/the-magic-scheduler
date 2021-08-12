@@ -1,6 +1,6 @@
 import { invalidateQuery, useMutation } from "blitz"
-import { LabeledTextField } from "app/core/components/LabeledTextField"
-import { Form, FORM_ERROR } from "app/core/components/Form"
+import { LabeledTextField } from "app/core/components/form/LabeledTextField"
+import { Form, FORM_ERROR } from "app/core/components/form/Form"
 import changeMyName from "app/users/mutations/changeMyName"
 import { UpdateProfile } from "app/auth/validations"
 import { useLoggedInUser } from "app/users/hooks/useCurrentUser"

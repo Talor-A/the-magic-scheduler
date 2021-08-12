@@ -21,7 +21,7 @@ import {
   Divider,
 } from "@chakra-ui/react"
 import { Header } from "app/core/components/Header"
-import LabeledTextField from "app/core/components/LabeledTextField"
+import LabeledTextField from "app/core/components/form/LabeledTextField"
 import SidebarWithHeader from "app/core/components/Sidebar"
 import { useLoggedInUser } from "app/users/hooks/useCurrentUser"
 import Layout from "app/core/layouts/Layout"

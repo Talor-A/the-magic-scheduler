@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "blitz"
-import { LabeledTextField } from "app/core/components/LabeledTextField"
-import { Form, FORM_ERROR } from "app/core/components/Form"
+import { LabeledTextField } from "app/core/components/form/LabeledTextField"
+import { Form, FORM_ERROR } from "app/core/components/form/Form"
 import createEvent, { CreateEvent } from "app/events/mutations/createEvent"
 import LabeledSelectField from "app/core/components/form/LabeledSelectField"
 import getTeam from "app/organizations/queries/getTeam"
