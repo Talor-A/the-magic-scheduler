@@ -14,7 +14,7 @@ import Layout from "app/core/layouts/Layout"
 import getCourse from "app/courses/queries/getCourse"
 import deleteCourse from "app/courses/mutations/deleteCourse"
 import SidebarWithHeader from "app/core/components/Sidebar"
-import { Box, Button, Heading, HStack } from "@chakra-ui/react"
+import { Box, Button, Heading, HStack, Stack } from "@chakra-ui/react"
 
 export interface CourseProps {
   courseId: number
@@ -60,6 +60,14 @@ export const Course = (props: CourseProps) => {
             Schedule
           </Button>
         </Link>
+
+        <Stack>
+          {course.events.map((event) => (
+            <Box p={4} key={event.id}>
+              {JSON.stringify(event)}
+            </Box>
+          ))}
+        </Stack>
       </Box>
     </>
   )

@@ -141,16 +141,6 @@ model Time {
   zone   String?
 }
 
-enum Days {
-  MONDAY
-  TUESDAY
-  WEDNESDAY
-  THURSDAY
-  FRIDAY
-  SATURDAY
-  SUNDAY
-}
-
 model Event {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
@@ -165,6 +155,22 @@ model Event {
   startTime Time?         @relation("EventStartTime")
   endTime   Time?         @relation("EventEndTime")
 
+  repeatId Int?
+  repeats  Repeats? @relation(fields: [repeatId], references: [id], onDelete: Cascade)
+
   allDay Boolean @default(false)
-  days   Days[]
+}
+
+model Repeats {
+  id    Int        @id @default(autoincrement())
+  event Event?
+  type  RepeatType
+  days  Int[]
+}
+
+enum RepeatType {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
 }

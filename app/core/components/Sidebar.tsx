@@ -144,13 +144,48 @@ const NavItem = ({ icon, children, route, ...rest }: NavItemProps) => {
 interface MobileProps extends FlexProps {
   onOpen: () => void
 }
-const TopHeader = ({ onOpen, ...rest }: MobileProps) => {
-  const { orgId } = useSession()
+
+const HeaderMenu = () => {
   const org = useCurrentOrg()
   const orgName = org ? org.name : "No Org"
 
   const { name } = useLoggedInUser()
 
+  return (
+    <Menu>
+      <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: "none" }}>
+        <HStack>
+          <Avatar name={name ?? undefined} size={"sm"} />
+          <VStack
+            display={{ base: "none", md: "flex" }}
+            alignItems="flex-start"
+            spacing="1px"
+            ml="2"
+          >
+            <Text fontSize="sm">{name}</Text>
+            <Text fontSize="xs" color="gray.600">
+              {orgName}
+            </Text>
+          </VStack>
+          <Box display={{ base: "none", md: "flex" }}>
+            <FiChevronDown />
+          </Box>
+        </HStack>
+      </MenuButton>
+      <MenuList
+        bg={useColorModeValue("white", "gray.900")}
+        borderColor={useColorModeValue("gray.200", "gray.700")}
+      >
+        <MenuItem>Profile</MenuItem>
+        <MenuItem>Settings</MenuItem>
+        <MenuItem>Billing</MenuItem>
+        <MenuDivider />
+        <MenuItem>Sign out</MenuItem>
+      </MenuList>
+    </Menu>
+  )
+}
+const TopHeader = ({ onOpen, ...rest }: MobileProps) => {
   return (
     <Flex
       as="header"
@@ -184,37 +219,9 @@ const TopHeader = ({ onOpen, ...rest }: MobileProps) => {
       <HStack spacing={{ base: "0", md: "6" }}>
         <IconButton size="lg" variant="ghost" aria-label="open menu" icon={<FiBell />} />
         <Flex alignItems={"center"}>
-          <Menu>
-            <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: "none" }}>
-              <HStack>
-                <Avatar name={name ?? undefined} size={"sm"} />
-                <VStack
-                  display={{ base: "none", md: "flex" }}
-                  alignItems="flex-start"
-                  spacing="1px"
-                  ml="2"
-                >
-                  <Text fontSize="sm">{name}</Text>
-                  <Text fontSize="xs" color="gray.600">
-                    {orgName}
-                  </Text>
-                </VStack>
-                <Box display={{ base: "none", md: "flex" }}>
-                  <FiChevronDown />
-                </Box>
-              </HStack>
-            </MenuButton>
-            <MenuList
-              bg={useColorModeValue("white", "gray.900")}
-              borderColor={useColorModeValue("gray.200", "gray.700")}
-            >
-              <MenuItem>Profile</MenuItem>
-              <MenuItem>Settings</MenuItem>
-              <MenuItem>Billing</MenuItem>
-              <MenuDivider />
-              <MenuItem>Sign out</MenuItem>
-            </MenuList>
-          </Menu>
+          <Suspense fallback="FIXME">
+            <HeaderMenu />
+          </Suspense>
         </Flex>
       </HStack>
     </Flex>

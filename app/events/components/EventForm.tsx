@@ -4,6 +4,8 @@ import { Form, FORM_ERROR } from "app/core/components/form/Form"
 import createEvent, { CreateEvent } from "app/events/mutations/createEvent"
 import LabeledSelectField from "app/core/components/form/LabeledSelectField"
 import getTeam from "app/organizations/queries/getTeam"
+import { Field } from "formik"
+import { Checkbox, FormControl, FormLabel } from "@chakra-ui/react"
 
 type EventFormProps = {
   onSuccess?: () => void
@@ -18,9 +20,9 @@ export const EventForm = ({ courseId, ...props }: EventFormProps) => {
   return (
     <div>
       <Form
-        submitText="Create Account"
+        submitText="Create Event"
         schema={CreateEvent}
-        initialValues={{ courseId, instructorIds: [] }}
+        initialValues={{ courseId, instructorIds: [], allDay: true }}
         onSubmit={async (values) => {
           try {
             await signupMutation(values)
@@ -43,6 +45,14 @@ export const EventForm = ({ courseId, ...props }: EventFormProps) => {
             </option>
           ))}
         </LabeledSelectField>
+        <Field
+          name="allDay"
+          render={({ field: { value, ...field } }) => (
+            <Checkbox isChecked={value} {...field}>
+              All Day Event
+            </Checkbox>
+          )}
+        />
       </Form>
     </div>
   )
