@@ -5,7 +5,7 @@ import { z } from "zod"
 
 export const CreateEvent = z.object({
   courseId: z.number(),
-  instructorIds: z.array(z.number()).optional(),
+  instructorIds: z.array(z.number()).min(1),
 
   allDay: z.boolean(),
 })

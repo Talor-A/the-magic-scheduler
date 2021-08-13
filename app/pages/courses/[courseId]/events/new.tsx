@@ -4,6 +4,7 @@ import createEvent from "app/events/mutations/createEvent"
 import SidebarWithHeader from "app/core/components/Sidebar"
 
 import { EventForm } from "app/events/components/EventForm"
+import { Heading, Stack } from "@chakra-ui/react"
 
 type Params = {
   courseId: string
@@ -14,11 +15,9 @@ const NewEventPage: BlitzPage<Params> = () => {
 
   const courseId = useParam("courseId", "number")!
 
-  const [createEventMutation] = useMutation(createEvent)
-
   return (
-    <div>
-      <h1>Create New Event</h1>
+    <Stack>
+      <Heading>Create New Event</Heading>
 
       <EventForm
         courseId={courseId}
@@ -30,13 +29,7 @@ const NewEventPage: BlitzPage<Params> = () => {
           )
         }
       />
-
-      <p>
-        <Link href={Routes.EventsPage({ courseId })}>
-          <a>Events</a>
-        </Link>
-      </p>
-    </div>
+    </Stack>
   )
 }
 
