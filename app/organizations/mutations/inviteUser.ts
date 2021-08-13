@@ -13,7 +13,7 @@ export default resolver.pipe(
   resolver.zod(InviteUser),
   resolver.authorize(),
   async ({ invitedUserEmail, invitedUserName }, ctx) => {
-    invariant(ctx.session.orgId, "Must be logged in to invite users")
+    invariant(ctx.session.orgId, "User is not logged into any organization")
 
     const userRole = await db.membership.findFirst({
       where: {

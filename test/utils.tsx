@@ -105,7 +105,11 @@ type RenderHookOptions = DefaultHookParams[1] & {
   dehydratedState?: unknown
 }
 
-export function getTestSession({ user, ...rest }: Partial<Ctx> & { user: User }): Ctx {
+export function getTestSession({
+  user,
+  orgId,
+  ...rest
+}: Partial<Ctx> & { user: User; orgId?: number }): Ctx {
   return {
     session: {
       $authorize: jest.fn(),
@@ -118,11 +122,13 @@ export function getTestSession({ user, ...rest }: Partial<Ctx> & { user: User })
       $publicData: {
         roles: ["USER"],
         userId: user.id,
+        orgId,
       },
       $revoke: jest.fn(),
       $revokeAll: jest.fn(),
       $setPrivateData: jest.fn(),
       $setPublicData: jest.fn(),
+      orgId,
 
       ...rest.session,
     },
