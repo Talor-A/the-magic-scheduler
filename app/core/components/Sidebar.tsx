@@ -40,6 +40,7 @@ const LinkItems: Array<LinkItemProps> = [
   { name: "Dashboard", icon: FiHome, route: Routes.Dashboard() },
   { name: "Profile", icon: FiSettings, route: Routes.Profile() },
   { name: "Courses", icon: FiCalendar, route: Routes.CoursesPage() },
+  { name: "Calendar", icon: FiCalendar, route: Routes.CalendarPage() },
 ]
 
 export default function SidebarWithHeader({ children }: { children: ReactNode }) {
