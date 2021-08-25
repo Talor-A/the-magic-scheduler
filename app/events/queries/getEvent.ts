@@ -1,5 +1,6 @@
 import { resolver, NotFoundError } from "blitz"
 import db from "db"
+import invariant from "tiny-invariant"
 import { z } from "zod"
 
 const GetEvent = z.object({
@@ -7,9 +8,21 @@ const GetEvent = z.object({
   id: z.number().optional().refine(Boolean, "Required"),
 })
 
-export default resolver.pipe(resolver.zod(GetEvent), resolver.authorize(), async ({ id }) => {
-  // TODO: in multi-tenant app, you must add validation to ensure correct tenant
-  const event = await db.event.findFirst({ where: { id } })
+export default resolver.pipe(resolver.zod(GetEvent), resolver.authorize(), async ({ id }, ctx) => {
+  invariant(ctx.session.orgId, "orgId is required for createCourse")
+
+  const event = await db.event.findFirst({
+    where: {
+      AND: [
+        { id },
+        {
+          course: {
+            organizationId: ctx.session.orgId,
+          },
+        },
+      ],
+    },
+  })
 
   if (!event) throw new NotFoundError()
 
