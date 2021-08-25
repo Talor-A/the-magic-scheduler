@@ -53,6 +53,14 @@ export const EventForm = ({ courseId, ...props }: EventFormProps) => {
             </Checkbox>
           )}
         />
+        <Field
+          name="repeats"
+          render={({ field: { value, ...field } }) => (
+            <Checkbox isChecked={value} {...field}>
+              Repeating
+            </Checkbox>
+          )}
+        />
       </Form>
     </div>
   )

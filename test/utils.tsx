@@ -134,3 +134,23 @@ export function getTestSession({
     },
   }
 }
+
+export function getLoggedOutSession(): Ctx {
+  return {
+    session: {
+      $authorize: jest.fn(),
+      $isAuthorized: jest.fn(() => false),
+      userId: null,
+      roles: [],
+      $getPrivateData: jest.fn(),
+      $create: jest.fn(),
+      $handle: null,
+      $publicData: {},
+      $revoke: jest.fn(),
+      $revokeAll: jest.fn(),
+      $setPrivateData: jest.fn(),
+      $setPublicData: jest.fn(),
+      orgId: null,
+    },
+  }
+}

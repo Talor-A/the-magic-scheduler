@@ -3,14 +3,10 @@ import login, { authenticateUser } from "./login"
 import seed from "db/seeds"
 import invariant from "tiny-invariant"
 import { getTestSession } from "test/utils"
+import { AuthenticationError } from "blitz"
 
 beforeAll(async () => {
   await seed()
-})
-
-test("invariant", () => {
-  invariant(true, "test")
-  expect(() => invariant(false, "test")).toThrow("test")
 })
 
 describe("authenticateUser", () => {
@@ -20,6 +16,17 @@ describe("authenticateUser", () => {
     expect(user).toBeDefined()
     expect(user.email).toBe("customer3@test.com")
     expect(user.role).toBe("CUSTOMER")
+  })
+
+  it("should throw if user is not found", async () => {
+    const initialUser = await db.user.findFirst({
+      where: { email: "customer0@test.com" },
+    })
+    invariant(initialUser, "initial user not found")
+
+    expect(() => authenticateUser("notfounduser@test.com", "customer123")).rejects.toThrow(
+      AuthenticationError
+    )
   })
 })
 

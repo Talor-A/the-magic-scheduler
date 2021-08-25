@@ -7,15 +7,17 @@ export const CreateEvent = z.object({
   courseId: z.number(),
   instructorIds: z.array(z.number()).min(1),
 
-  allDay: z.boolean(),
+  allDay: z.boolean().optional(),
 })
+
+export type CreateEventArgs = z.input<typeof CreateEvent>
 
 export default resolver.pipe(
   resolver.zod(CreateEvent),
   resolver.authorize(),
-  async ({ courseId, instructorIds = [] }, ctx) => {
+  async ({ courseId, instructorIds = [], allDay = false }, ctx) => {
     const { orgId: organizationId } = ctx.session
-    invariant(organizationId, "orgId is required for createCourse")
+    invariant(organizationId, "orgId is required for createEvent")
 
     const course = await db.course.findFirst({
       where: {
@@ -43,8 +45,11 @@ export default resolver.pipe(
           },
         },
         instructors: {
-          connect: instructors,
+          connect: instructors.map((instructor) => ({
+            id: instructor.id,
+          })),
         },
+        allDay,
       },
     })
 
