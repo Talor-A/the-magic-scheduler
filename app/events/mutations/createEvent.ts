@@ -1,21 +1,38 @@
 import { resolver } from "blitz"
-import db from "db"
+import db, { zodEnum } from "db"
 import invariant from "tiny-invariant"
 import { z } from "zod"
+
+export const CreateRepeats = z.union([
+  z.object({
+    type: z.literal("DAILY"),
+    days: z
+      .array(z.number())
+      .optional()
+      .transform((): number[] => []),
+  }),
+  z.object({
+    type: z.literal("WEEKLY"),
+    // TODO: refine
+    days: z.array(z.number()).refine((arr) => arr.every((x) => x >= 0 && x <= 6)), // 0 = Sunday
+  }),
+])
 
 export const CreateEvent = z.object({
   courseId: z.number(),
   instructorIds: z.array(z.number()).min(1),
 
   allDay: z.boolean().optional(),
-})
 
-export type CreateEventArgs = z.input<typeof CreateEvent>
+  tz: z.string().optional(),
+
+  repeats: CreateRepeats.optional(),
+})
 
 export default resolver.pipe(
   resolver.zod(CreateEvent),
   resolver.authorize(),
-  async ({ courseId, instructorIds = [], allDay = false }, ctx) => {
+  async ({ courseId, instructorIds = [], allDay = true, repeats }, ctx) => {
     const { orgId: organizationId } = ctx.session
     invariant(organizationId, "orgId is required for createEvent")
 
@@ -50,6 +67,15 @@ export default resolver.pipe(
           })),
         },
         allDay,
+
+        repeats: repeats
+          ? {
+              create: {
+                type: repeats.type,
+                days: repeats.days,
+              },
+            }
+          : undefined,
       },
     })
 

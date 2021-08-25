@@ -1,8 +1,8 @@
-import db from "db"
+import db, { Course, Membership, User } from "db"
 import { getUserAttributes } from "test/factories"
 import { getTestSession } from "test/utils"
 import invariant from "tiny-invariant"
-import createEvent from "./createEvent"
+import createEvent, { CreateEvent } from "./createEvent"
 import updateEvent from "./updateEvent"
 import deleteEvent from "./updateEvent"
 
@@ -10,38 +10,54 @@ beforeAll(async () => {
   await db.$reset()
 })
 
-describe("createEvent", () => {
-  test("admins can create an event", async () => {
-    const admin = await db.user.create({
-      data: {
-        ...getUserAttributes(),
-        memberships: {
-          create: {
-            role: "ADMIN",
-            organization: {
-              create: {
-                name: "Test Organization",
-                Course: {
-                  create: {
-                    name: "Test Course",
-                  },
+const setup = async () => {
+  const admin = await db.user.create({
+    data: {
+      ...getUserAttributes(),
+      memberships: {
+        create: {
+          role: "ADMIN",
+          organization: {
+            create: {
+              name: "Test Organization",
+              Course: {
+                create: {
+                  name: "Test Course",
                 },
               },
             },
           },
         },
       },
-      include: {
-        memberships: true,
-      },
-    })
-    const course = await db.course.findFirst({
-      where: {
-        name: "Test Course",
-        organizationId: admin.memberships[0]!.organizationId,
-      },
-    })
-    invariant(course, "course should exist")
+    },
+    include: {
+      memberships: true,
+    },
+  })
+  const course = await db.course.findFirst({
+    where: {
+      name: "Test Course",
+      organizationId: admin.memberships[0]!.organizationId,
+    },
+  })
+  invariant(course, "course should exist")
+  return [course, admin] as const
+}
+
+const getEvent = async (id: number) => {
+  const event = await db.event.findFirst({
+    where: { id },
+    include: {
+      repeats: true,
+    },
+  })
+  invariant(event, `event ${id} should exist`)
+  return event
+}
+
+describe("createEvent", () => {
+  test("admins can create an event", async () => {
+    const [course, admin] = await setup()
 
     const event = await createEvent(
       {
@@ -57,35 +73,7 @@ describe("createEvent", () => {
   })
 
   test("can create an all day event", async () => {
-    const admin = await db.user.create({
-      data: {
-        ...getUserAttributes(),
-        memberships: {
-          create: {
-            role: "ADMIN",
-            organization: {
-              create: {
-                name: "Test Organization",
-                Course: {
-                  create: {
-                    name: "Test Course",
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-      include: {
-        memberships: true,
-      },
-    })
-    const course = await db.course.findFirst({
-      where: {
-        organizationId: admin.memberships[0]!.organizationId,
-      },
-    })
-    invariant(course, "course should exist")
+    const [course, admin] = await setup()
 
     const event = await createEvent(
       {
@@ -99,36 +87,7 @@ describe("createEvent", () => {
   })
 
   it("should throw an error if no instructor is provided", async () => {
-    const admin = await db.user.create({
-      data: {
-        ...getUserAttributes(),
-        memberships: {
-          create: {
-            role: "ADMIN",
-            organization: {
-              create: {
-                name: "Test Organization",
-                Course: {
-                  create: {
-                    name: "Test Course",
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-      include: {
-        memberships: true,
-      },
-    })
-    const course = await db.course.findFirst({
-      where: {
-        name: "Test Course",
-        organizationId: admin.memberships[0]!.organizationId,
-      },
-    })
-    invariant(course, "course should exist")
+    const [course, admin] = await setup()
 
     await expect(
       createEvent(
@@ -139,5 +98,47 @@ describe("createEvent", () => {
         getTestSession({ user: admin, orgId: admin.memberships[0]!.organizationId })
       )
     ).rejects.toThrow()
+  })
+
+  it("can create a daily reoccuring event", async () => {
+    const [course, admin] = await setup()
+    const _event = await createEvent(
+      {
+        courseId: course.id,
+        instructorIds: [admin.id],
+        repeats: {
+          type: "DAILY",
+          days: [1, 2, 3, 4, 5],
+        },
+      },
+      getTestSession({ user: admin, orgId: admin.memberships[0]!.organizationId })
+    )
+    const event = await getEvent(_event.id)
+
+    invariant(event.repeats, "event should have a repeats object")
+
+    expect(event.repeats.type).toBe("DAILY")
+    expect(event.repeats.days).toEqual([])
+  })
+  it("can create a weekly repeating event", async () => {
+    const [course, admin] = await setup()
+
+    const _event = await createEvent(
+      {
+        courseId: course.id,
+        instructorIds: [admin.id],
+        allDay: true,
+        repeats: {
+          type: "WEEKLY",
+          days: [1, 2, 3, 4, 5],
+        },
+      },
+      getTestSession({ user: admin, orgId: admin.memberships[0]!.organizationId })
+    )
+    const event = await getEvent(_event.id)
+    invariant(event.repeats, "event should have a repeats object")
+
+    expect(event.repeats.type).toBe("WEEKLY")
+    expect(event.repeats.days).toEqual([1, 2, 3, 4, 5])
   })
 })
