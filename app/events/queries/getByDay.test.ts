@@ -68,12 +68,37 @@ describe("getByDay", () => {
 
     expect(events).toHaveLength(1)
 
-    const event = events[0]!
-
-    expect(event.id).toBe(_event.id)
+    expect(events[0]!.id).toBe(_event.id)
   })
 
-  it.todo("should include repeating events")
+  it.todo("should include repeating events", async () => {
+    const [course, admin, orgId] = await setup()
+    const _event = await createEvent(
+      {
+        courseId: course.id,
+        instructorIds: [admin.id],
+        start: {
+          month: "AUG",
+          day: 7,
+          year: 2020,
+        },
+        repeats: {
+          type: "WEEKLY",
+          days: [1, 2, 3, 4, 5],
+        },
+      },
+      getTestSession({ user: admin, orgId })
+    )
+
+    const events = await getByDay(
+      {
+        date: new Date(2020, 7, 10),
+      },
+      getTestSession({ user: admin, orgId })
+    )
+
+    expect(events.find((e) => e.id === _event.id)).toBeDefined()
+  })
 
   it.todo("should exclude events that are not visible to the user")
 
