@@ -115,32 +115,6 @@ model Course {
   events Event[]
 }
 
-model CalendarDate {
-  id Int @id @default(autoincrement())
-
-  eventStartId Int?
-  startEvent   Event? @relation("EventStartDate", fields: [eventStartId], references: [id], onDelete: Cascade)
-  eventEndId   Int?
-  endEvent     Event? @relation("EventEndDate", fields: [eventEndId], references: [id], onDelete: Cascade)
-
-  day   Int @default(1)
-  month Int @default(1)
-  year  Int @default(2021)
-}
-
-model Time {
-  id Int @id @default(autoincrement())
-
-  eventStartId Int?
-  startEvent   Event? @relation("EventStartTime", fields: [eventStartId], references: [id], onDelete: Cascade)
-  eventEndId   Int?
-  endEvent     Event? @relation("EventEndTime", fields: [eventEndId], references: [id], onDelete: Cascade)
-
-  hour   Int     @default(0)
-  minute Int     @default(0)
-  zone   String?
-}
-
 model Event {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
@@ -150,10 +124,9 @@ model Event {
   courseId    Int
   instructors Membership[]
 
-  start     CalendarDate? @relation("EventStartDate")
-  end       CalendarDate? @relation("EventEndDate")
-  startTime Time?         @relation("EventStartTime")
-  endTime   Time?         @relation("EventEndTime")
+
+  startsAt DateTime @default(now())
+  endsAt   DateTime @default(now())
 
   repeatId Int?
   repeats  Repeats? @relation(fields: [repeatId], references: [id], onDelete: Cascade)
@@ -166,6 +139,7 @@ model Repeats {
   event Event?
   type  RepeatType
   days  Int[]
+  until DateTime?
 }
 
 enum RepeatType {

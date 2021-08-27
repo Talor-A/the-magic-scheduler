@@ -1,4 +1,5 @@
 import { resolver } from "blitz"
+import { add } from "date-fns"
 import db from "db"
 import invariant from "tiny-invariant"
 import { z } from "zod"
@@ -12,10 +13,9 @@ export default resolver.pipe(resolver.zod(GetByDay), resolver.authorize(), async
 
   const event = await db.event.findMany({
     where: {
-      start: {
-        day: data.date.getDate(),
-        month: data.date.getMonth(),
-        year: data.date.getFullYear(),
+      startsAt: {
+        gte: data.date,
+        lt: add(data.date, { days: 1 }),
       },
 
       course: {

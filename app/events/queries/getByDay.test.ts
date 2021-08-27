@@ -1,3 +1,4 @@
+import { add } from "date-fns"
 import db from "db"
 import { getUserAttributes } from "test/factories"
 import { getTestSession } from "test/utils"
@@ -50,11 +51,8 @@ describe("getByDay", () => {
       {
         courseId: course.id,
         instructorIds: [admin.id],
-        start: {
-          month: "AUG",
-          day: 7,
-          year: 2020,
-        },
+        start: new Date(2020, 7, 7),
+        end: add(new Date(2020, 7, 7), { hours: 1 }),
       },
       getTestSession({ user: admin, orgId })
     )
@@ -77,11 +75,8 @@ describe("getByDay", () => {
       {
         courseId: course.id,
         instructorIds: [admin.id],
-        start: {
-          month: "AUG",
-          day: 7,
-          year: 2020,
-        },
+        start: new Date(2020, 7, 7),
+        end: add(new Date(2020, 7, 7), { hours: 1 }),
         repeats: {
           type: "WEEKLY",
           days: [1, 2, 3, 4, 5],

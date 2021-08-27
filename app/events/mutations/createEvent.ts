@@ -5,6 +5,8 @@ import { z } from "zod"
 
 export const CreateRepeats = z.union([
   z.object({
+    until: z.date().optional(),
+
     type: z.literal("DAILY"),
     // for now, discard the days array.
     // TODO: in the future, enable "repeats every X days"
@@ -14,46 +16,13 @@ export const CreateRepeats = z.union([
       .transform((): number[] => []),
   }),
   z.object({
+    until: z.date().optional(),
+
     type: z.literal("WEEKLY"),
     // TODO: refine
     days: z.array(z.number()).refine((arr) => arr.every((x) => x >= 0 && x <= 6)), // 0 = Sunday
   }),
 ])
-
-export const monthsEnum = z.enum([
-  "JAN",
-  "FEB",
-  "MAR",
-  "APR",
-  "MAY",
-  "JUN",
-  "JUL",
-  "AUG",
-  "SEP",
-  "OCT",
-  "NOV",
-  "DEC",
-])
-export const months = [
-  "JAN",
-  "FEB",
-  "MAR",
-  "APR",
-  "MAY",
-  "JUN",
-  "JUL",
-  "AUG",
-  "SEP",
-  "OCT",
-  "NOV",
-  "DEC",
-] as const
-
-export const CreateCalendarDate = z.object({
-  day: z.number().refine((x) => x >= 1 && x <= 31),
-  month: monthsEnum,
-  year: z.number().refine((x) => x >= 1900 && x <= 2100),
-})
 
 export const CreateEvent = z.object({
   courseId: z.number(),
@@ -65,14 +34,14 @@ export const CreateEvent = z.object({
 
   repeats: CreateRepeats.optional(),
 
-  start: CreateCalendarDate.optional(),
-  end: CreateCalendarDate.optional(),
+  start: z.date(),
+  end: z.date(),
 })
 
 export default resolver.pipe(
   resolver.zod(CreateEvent),
   resolver.authorize(),
-  async ({ courseId, instructorIds = [], allDay = true, repeats, start }, ctx) => {
+  async ({ courseId, instructorIds = [], allDay = true, repeats, start, end }, ctx) => {
     const { orgId: organizationId } = ctx.session
     invariant(organizationId, "orgId is required for createEvent")
 
@@ -108,21 +77,15 @@ export default resolver.pipe(
         },
         allDay,
 
-        start: start
-          ? {
-              create: {
-                day: start.day,
-                month: months.indexOf(start.month),
-                year: start.year,
-              },
-            }
-          : undefined,
+        startsAt: start,
+        endsAt: end,
 
         repeats: repeats
           ? {
               create: {
                 type: repeats.type,
                 days: repeats.days,
+                until: repeats.until,
               },
             }
           : undefined,
