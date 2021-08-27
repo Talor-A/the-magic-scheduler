@@ -69,7 +69,8 @@ describe("getByDay", () => {
     expect(events[0]!.id).toBe(_event.id)
   })
 
-  it.todo("should include repeating events", async () => {
+  // TODO: get to green
+  it.skip("should include repeating events", async () => {
     const [course, admin, orgId] = await setup()
     const _event = await createEvent(
       {
