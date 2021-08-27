@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE "CalendarDate" ALTER COLUMN "eventStartId" DROP NOT NULL,
+ALTER COLUMN "eventEndId" DROP NOT NULL;
+
+-- AlterTable
+ALTER TABLE "Time" ALTER COLUMN "eventStartId" DROP NOT NULL,
+ALTER COLUMN "eventEndId" DROP NOT NULL;

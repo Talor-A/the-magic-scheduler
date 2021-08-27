@@ -118,10 +118,10 @@ model Course {
 model CalendarDate {
   id Int @id @default(autoincrement())
 
-  eventStartId Int
-  startEvent   Event @relation("EventStartDate", fields: [eventStartId], references: [id], onDelete: Cascade)
-  eventEndId   Int
-  endEvent     Event @relation("EventEndDate", fields: [eventEndId], references: [id], onDelete: Cascade)
+  eventStartId Int?
+  startEvent   Event? @relation("EventStartDate", fields: [eventStartId], references: [id], onDelete: Cascade)
+  eventEndId   Int?
+  endEvent     Event? @relation("EventEndDate", fields: [eventEndId], references: [id], onDelete: Cascade)
 
   day   Int @default(1)
   month Int @default(1)
@@ -131,10 +131,10 @@ model CalendarDate {
 model Time {
   id Int @id @default(autoincrement())
 
-  eventStartId Int
-  startEvent   Event @relation("EventStartTime", fields: [eventStartId], references: [id], onDelete: Cascade)
-  eventEndId   Int
-  endEvent     Event @relation("EventEndTime", fields: [eventEndId], references: [id], onDelete: Cascade)
+  eventStartId Int?
+  startEvent   Event? @relation("EventStartTime", fields: [eventStartId], references: [id], onDelete: Cascade)
+  eventEndId   Int?
+  endEvent     Event? @relation("EventEndTime", fields: [eventEndId], references: [id], onDelete: Cascade)
 
   hour   Int     @default(0)
   minute Int     @default(0)

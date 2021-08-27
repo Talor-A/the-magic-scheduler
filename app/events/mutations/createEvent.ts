@@ -18,6 +18,41 @@ export const CreateRepeats = z.union([
   }),
 ])
 
+export const monthsEnum = z.enum([
+  "JAN",
+  "FEB",
+  "MAR",
+  "APR",
+  "MAY",
+  "JUN",
+  "JUL",
+  "AUG",
+  "SEP",
+  "OCT",
+  "NOV",
+  "DEC",
+])
+export const months = [
+  "JAN",
+  "FEB",
+  "MAR",
+  "APR",
+  "MAY",
+  "JUN",
+  "JUL",
+  "AUG",
+  "SEP",
+  "OCT",
+  "NOV",
+  "DEC",
+] as const
+
+export const CreateCalendarDate = z.object({
+  day: z.number().refine((x) => x >= 1 && x <= 31),
+  month: monthsEnum,
+  year: z.number().refine((x) => x >= 1900 && x <= 2100),
+})
+
 export const CreateEvent = z.object({
   courseId: z.number(),
   instructorIds: z.array(z.number()).min(1),
@@ -27,12 +62,15 @@ export const CreateEvent = z.object({
   tz: z.string().optional(),
 
   repeats: CreateRepeats.optional(),
+
+  start: CreateCalendarDate.optional(),
+  end: CreateCalendarDate.optional(),
 })
 
 export default resolver.pipe(
   resolver.zod(CreateEvent),
   resolver.authorize(),
-  async ({ courseId, instructorIds = [], allDay = true, repeats }, ctx) => {
+  async ({ courseId, instructorIds = [], allDay = true, repeats, start }, ctx) => {
     const { orgId: organizationId } = ctx.session
     invariant(organizationId, "orgId is required for createEvent")
 
@@ -67,6 +105,16 @@ export default resolver.pipe(
           })),
         },
         allDay,
+
+        start: start
+          ? {
+              create: {
+                day: start.day,
+                month: months.indexOf(start.month),
+                year: start.year,
+              },
+            }
+          : undefined,
 
         repeats: repeats
           ? {

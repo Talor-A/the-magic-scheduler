@@ -1,4 +1,5 @@
-import db, { Course, Membership, User } from "db"
+import db, { Course, Membership, User, CalendarDate } from "db"
+import { parseCalendarDate } from "db/util"
 import { getUserAttributes } from "test/factories"
 import { getTestSession } from "test/utils"
 import invariant from "tiny-invariant"
@@ -49,6 +50,8 @@ const getEvent = async (id: number) => {
     where: { id },
     include: {
       repeats: true,
+      start: true,
+      end: true,
     },
   })
   invariant(event, `event ${id} should exist`)
@@ -140,5 +143,26 @@ describe("createEvent", () => {
 
     expect(event.repeats.type).toBe("WEEKLY")
     expect(event.repeats.days).toEqual([1, 2, 3, 4, 5])
+  })
+
+  it("can create an event with a start date", async () => {
+    const [course, admin] = await setup()
+
+    const _event = await createEvent(
+      {
+        courseId: course.id,
+        instructorIds: [admin.id],
+        start: {
+          day: 7,
+          month: "AUG",
+          year: 2020,
+        },
+      },
+      getTestSession({ user: admin, orgId: admin.memberships[0]!.organizationId })
+    )
+    const event = await getEvent(_event.id)
+    invariant(event.start, "event should have a start object")
+
+    expect(parseCalendarDate(event.start).toISOString()).toBe(new Date(2020, 7, 7).toISOString())
   })
 })
