@@ -9,7 +9,7 @@ const GetEvent = z.object({
 })
 
 export default resolver.pipe(resolver.zod(GetEvent), resolver.authorize(), async ({ id }, ctx) => {
-  invariant(ctx.session.orgId, "orgId is required for createCourse")
+  invariant(ctx.session.orgId, "orgId is required for getEvent")
 
   const event = await db.event.findFirst({
     where: {
