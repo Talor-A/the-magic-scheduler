@@ -6,6 +6,8 @@ import { z } from "zod"
 export const CreateRepeats = z.union([
   z.object({
     type: z.literal("DAILY"),
+    // for now, discard the days array.
+    // TODO: in the future, enable "repeats every X days"
     days: z
       .array(z.number())
       .optional()

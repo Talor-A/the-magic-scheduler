@@ -111,6 +111,8 @@ describe("createEvent", () => {
         instructorIds: [admin.id],
         repeats: {
           type: "DAILY",
+
+          // purposely invalid
           days: [1, 2, 3, 4, 5],
         },
       },
