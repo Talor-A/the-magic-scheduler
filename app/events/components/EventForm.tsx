@@ -22,7 +22,14 @@ export const EventForm = ({ courseId, ...props }: EventFormProps) => {
       <Form
         submitText="Create Event"
         schema={CreateEvent}
-        initialValues={{ courseId, instructorIds: [], allDay: true }}
+        initialValues={{
+          courseId,
+          instructorIds: [],
+          allDay: true,
+          // TODO: add start and end time fields
+          end: new Date(),
+          start: new Date(),
+        }}
         onSubmit={async (values) => {
           try {
             await signupMutation(values)
