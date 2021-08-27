@@ -35,7 +35,7 @@ const RenderCalendar = () => (
     <Calendar
       events={DummyEvents}
       localizer={localizer}
-      defaultDate={new Date(2015, 3, 1)}
+      defaultDate={new Date()}
       defaultView={Views.MONTH}
     />
     <style jsx global>{`
