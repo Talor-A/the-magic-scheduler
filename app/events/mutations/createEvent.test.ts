@@ -1,6 +1,5 @@
 import { add } from "date-fns"
 import db from "db"
-import { parseCalendarDate } from "db/util"
 import { getUserAttributes } from "test/factories"
 import { getTestSession } from "test/utils"
 import invariant from "tiny-invariant"
