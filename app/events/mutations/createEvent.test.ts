@@ -1,11 +1,9 @@
-import db, { Course, Membership, User, CalendarDate } from "db"
+import db from "db"
 import { parseCalendarDate } from "db/util"
 import { getUserAttributes } from "test/factories"
 import { getTestSession } from "test/utils"
 import invariant from "tiny-invariant"
-import createEvent, { CreateEvent } from "./createEvent"
-import updateEvent from "./updateEvent"
-import deleteEvent from "./updateEvent"
+import createEvent from "./createEvent"
 
 beforeAll(async () => {
   await db.$reset()
