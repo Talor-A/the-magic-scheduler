@@ -36,6 +36,12 @@ const seed = async () => {
     })
   }
 
+  const firstUser = (await db.user.findFirst({
+    where: {
+      email: "customer0@test.com",
+    },
+  }))!
+
   // create a new organization for a customer
   const firstOrg = await db.organization.create({
     data: {
@@ -61,6 +67,43 @@ const seed = async () => {
       role: "USER",
       invitedEmail: "customer1@test.com",
       organizationId: firstOrg.id,
+    },
+  })
+
+  // create a course
+
+  const course = await db.course.create({
+    data: {
+      name: faker.commerce.productName(),
+      organization: {
+        connect: {
+          id: firstOrg.id,
+        },
+      },
+      events: {
+        create: [
+          {
+            allDay: true,
+            // start on august 7th
+            startsAt: new Date(2020, 7, 7),
+            endsAt: new Date(2020, 7, 8),
+            instructors: {
+              connect: [
+                {
+                  id: firstUser.id,
+                },
+              ],
+            },
+            repeats: {
+              create: {
+                type: "DAILY",
+                days: [],
+                until: new Date(2020, 8, 15),
+              },
+            },
+          },
+        ],
+      },
     },
   })
 }
